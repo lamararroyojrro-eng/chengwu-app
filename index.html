@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>乘务之家 · 完整版</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0d1b3e;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif}
+:root{
+  --navy:#071d5e;--blue:#0b2fa5;--gold:#c9a227;--red:#c0392b;
+  --card:#fff;--bg:#f2f4f8;--t1:#1a1a1a;--t2:#4a4a5a;--t3:#999;--border:#e8eaf0;
+  --bb:#e6f1fb;--bt:#0c447c;--gb:#eaf3de;--gt:#27500a;
+  --ab:#faeeda;--at:#633806;--pb:#eeedfe;--pt:#3c3489;
+  --rb:#fcebeb;--rt:#791f1f;--cb:#e1f5ee;--ct:#085041;--pu:#534ab7
+}
+.app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--card);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.4);position:relative}
+.pg{flex:1;overflow-y:auto;display:none;flex-direction:column;-webkit-overflow-scrolling:touch}
+.pg.on{display:flex}
+.tc{display:none}.tc.on{display:block}
+/* NAV */
+.bnav{flex-shrink:0;display:flex;background:var(--card);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.ni{flex:1;text-align:center;padding:8px 0 5px;cursor:pointer;font-size:9px;color:var(--t3);border-top:2px solid transparent;position:relative}
+.ni.on{color:var(--blue);border-top-color:var(--blue);font-weight:700}
+.nic{font-size:19px;display:block;margin-bottom:1px;line-height:1}
+.ni-dot{position:absolute;top:6px;right:calc(50% - 14px);width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid #fff}
+/* COMMON */
+.bbtn{background:none;border:none;color:rgba(255,255,255,.85);font-size:20px;cursor:pointer;padding:0;line-height:1}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
+.tbl{background:var(--bb);color:var(--bt)}.tgr{background:var(--gb);color:var(--gt)}
+.tam{background:var(--ab);color:var(--at)}.tpu{background:var(--pb);color:var(--pt)}
+.trd{background:var(--rb);color:var(--rt)}.tcy{background:var(--cb);color:var(--ct)}
+.vb{font-size:10px;background:var(--gb);color:var(--gt);padding:1px 6px;border-radius:99px;font-weight:500}
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;padding:9px 20px;border-radius:99px;font-size:13px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;max-width:85%}
+.toast.show{opacity:1}
+.pghd{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:9px;flex-shrink:0;position:relative;overflow:hidden}
+.pghd::before{content:"";position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px}
+.pghd-z{position:relative;z-index:1;display:flex;align-items:center;gap:9px;width:100%}
+.pghd-title{font-size:15px;font-weight:700;color:#fff;flex:1}
+.iblock{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.ib-hd{padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--t1)}
+.ib-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:9px;align-items:flex-start}
+.ib-row:last-child{border-bottom:none}
+.ib-k{font-size:12px;color:var(--t3);width:72px;flex-shrink:0}
+.ib-v{font-size:13px;color:var(--t1);flex:1;line-height:1.5}
+.ib-v.red{color:var(--red);font-weight:600}.ib-v.blue{color:var(--blue);cursor:pointer}
+.cfrow{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cfrow::-webkit-scrollbar{display:none}
+.cfchip{flex-shrink:0;padding:5px 12px;border-radius:99px;font-size:12px;border:1px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;font-weight:500}
+.cfchip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tabbar2{display:flex;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.ttb{flex:1;text-align:center;padding:10px 0;font-size:11px;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;font-weight:500}
+.ttb.on{color:var(--blue);border-bottom-color:var(--blue)}
+/* modal */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal-wrap.show{display:flex}
+.modal{background:var(--card);border-radius:18px;padding:22px;width:300px}
+.modal-title{font-size:16px;font-weight:700;color:var(--t1);margin-bottom:5px;text-align:center}
+.modal-sub{font-size:12px;color:var(--t3);margin-bottom:14px;text-align:center;line-height:1.6}
+.modal-inp{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:14px;background:var(--bg);color:var(--t1);outline:none;margin-bottom:5px;font-family:inherit}
+.modal-hint{font-size:11px;color:var(--t3);margin-bottom:14px}
+.modal-btns{display:flex;gap:8px}
+.modal-cancel{flex:1;padding:11px;border:1px solid var(--border);border-radius:10px;background:none;color:var(--t2);font-size:13px;cursor:pointer}
+.modal-ok{flex:1;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer}
+/* share sheet */
+.share-sheet{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+.share-sheet.show{display:flex}
+.ss-inner{background:var(--card);border-radius:18px 18px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:430px}
+.ss-title{font-size:15px;font-weight:700;color:var(--t1);text-align:center;margin-bottom:18px}
+.ss-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.ss-opt{text-align:center;cursor:pointer}
+.ss-ico{width:54px;height:54px;border-radius:14px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.ss-lbl{font-size:11px;color:var(--t2)}
+.ss-cancel{width:100%;padding:13px;background:var(--bg);border:none;border-radius:12px;font-size:14px;color:var(--t2);cursor:pointer}
+
+/* ===== LANDING ===== */
+.land{background:var(--navy);flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.land::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:18px 18px}
+.lz{position:relative;z-index:1;padding:28px 18px 22px;display:flex;flex-direction:column;align-items:center;flex:1}
+.l-logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.l-ico{width:42px;height:42px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.l-head{font-size:25px;font-weight:700;color:#fff;text-align:center;line-height:1.3;margin-bottom:6px}
+.l-sub{font-size:12px;color:rgba(255,255,255,.58);text-align:center;line-height:1.65;margin-bottom:22px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:20px}
+.pc{border-radius:14px;padding:14px 12px;cursor:pointer;transition:transform .15s;border:1px solid transparent}
+.pc:active{transform:scale(.97)}
+.pc.gold{background:rgba(201,162,39,.13);border-color:rgba(201,162,39,.5)}
+.pc.navy{background:rgba(11,47,165,.3);border-color:rgba(11,47,165,.65)}
+.pc.green{background:rgba(29,158,117,.15);border-color:rgba(29,158,117,.5)}
+.pc.teal{background:rgba(8,80,65,.24);border-color:rgba(8,80,65,.58)}
+.pc.purple{background:rgba(83,74,183,.24);border-color:rgba(83,74,183,.58)}
+.pc.amber{background:rgba(186,117,23,.15);border-color:rgba(186,117,23,.5)}
+.pc-ico{font-size:24px;display:block;margin-bottom:7px}
+.pc-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
+.pc-desc{font-size:10px;color:rgba(255,255,255,.52);line-height:1.45}
+.pc-btn{margin-top:9px;width:100%;padding:7px;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer}
+.l-stats{display:flex;width:100%;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
+.lst{flex:1;text-align:center}
+.lst-n{font-size:17px;font-weight:700;color:var(--gold)}
+.lst-l{font-size:9px;color:rgba(255,255,255,.45);margin-top:2px}
+
+/* ===== HERO ===== */
+.hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.hero::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.hz{position:relative;z-index:1;padding:13px 16px 17px}
+.htb{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.hlogo{font-size:17px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px}
+.hli{width:26px;height:26px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.hlbl{display:inline-block;background:rgba(201,162,39,.18);color:var(--gold);font-size:11px;padding:2px 9px;border-radius:99px;margin-bottom:8px;border:1px solid rgba(201,162,39,.3)}
+.htitle{font-size:23px;font-weight:700;color:#fff;line-height:1.28;margin-bottom:5px}
+.hsub{font-size:12px;color:rgba(255,255,255,.58);line-height:1.6;margin-bottom:13px}
+.hsearch{display:flex;background:#fff;border-radius:99px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.hsearch input{flex:1;border:none;padding:11px 15px;font-size:13px;outline:none;color:var(--navy);background:transparent}
+.hsbtn{background:var(--blue);color:#fff;border:none;padding:0 18px;font-size:12px;font-weight:700;cursor:pointer;border-radius:0 99px 99px 0}
+.hstats{display:flex;margin-top:14px;border-top:1px solid rgba(255,255,255,.1);padding-top:13px}
+.hst{flex:1;text-align:center}
+.hstn{font-size:18px;font-weight:700;color:var(--gold)}
+.hstl{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
+/* QMENU */
+.qmenu{display:grid;grid-template-columns:repeat(6,1fr);background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.qm{text-align:center;padding:9px 2px 8px;cursor:pointer;position:relative}
+.qm:active{opacity:.7}
+.qm-ico{font-size:22px;display:block;margin-bottom:2px;line-height:1}
+.qm-lbl{font-size:9px;color:var(--t2)}
+.qm-badge{position:absolute;top:5px;right:50%;transform:translateX(120%);font-size:8px;padding:1px 4px;border-radius:99px;font-weight:700;line-height:1.4}
+.badge-new{background:var(--gold);color:var(--navy)}
+.badge-hot{background:var(--red);color:#fff}
+/* IND */
+.sec-wrap{padding:12px 16px 0}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sec-t{font-size:14px;font-weight:700;color:var(--t1)}
+.sec-m{font-size:12px;color:var(--blue);cursor:pointer}
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 6px;cursor:pointer;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ic.on{border-color:var(--blue);background:var(--bb)}
+.ic-ico{font-size:20px;display:block;margin-bottom:3px}
+.ic-name{font-size:11px;font-weight:700;color:var(--t1)}
+.ic-cnt{font-size:10px;color:var(--t3);margin-top:1px}
+.ic.on .ic-name{color:var(--bt)}
+/* JOB CARDS */
+.jcard{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.jcard:active{transform:scale(.99)}
+.jc-in{padding:12px 14px}
+.jc-top{display:flex;justify-content:space-between;margin-bottom:5px;gap:6px}
+.jc-t{font-size:14px;font-weight:700;color:var(--t1);flex:1}
+.jc-s{font-size:13px;font-weight:700;color:var(--red);flex-shrink:0}
+.jc-co{font-size:11px;color:var(--t2);margin-bottom:6px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.colog{width:17px;height:17px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700;flex-shrink:0}
+.jc-foot{margin-top:8px;padding-top:7px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--t3)}
+.ddl{color:var(--red);font-weight:600}
+/* BANNERS */
+.banner{margin:4px 16px 10px;border-radius:14px;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.banner:active{opacity:.88}
+.bn-t{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
+.bn-s{font-size:11px;color:rgba(255,255,255,.72)}
+
+/* ===== JOB DETAIL ===== */
+.det-hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.det-hero::before{content:"";position:absolute;inset:0;opacity:.08;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.det-z{position:relative;z-index:1;padding:14px 16px 18px;text-align:center}
+.det-icon{font-size:38px;display:block;margin-bottom:9px}
+.det-title{font-size:21px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.3}
+.det-co{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:10px}
+.det-sal{display:inline-block;background:var(--gold);color:var(--navy);font-size:15px;font-weight:700;padding:6px 18px;border-radius:99px}
+.det-actions{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0;gap:8px}
+.det-meta{font-size:11px;color:var(--t2);flex:1;line-height:1.8}
+.icon-btn{display:flex;align-items:center;gap:3px;padding:7px 11px;border:1px solid var(--border);border-radius:99px;font-size:11px;color:var(--t2);cursor:pointer;background:var(--card);white-space:nowrap}
+.ddl-bar{background:#fffbf0;border:1px solid var(--ab);padding:9px 14px;font-size:12px;color:var(--at);flex-shrink:0}
+.apply-btn{width:100%;margin-top:18px;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(11,47,165,.3)}
+.apply-btn.done{background:#27500a;box-shadow:none}
+
+/* ===== NEWS / POSTS ===== */
+.news-card{margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.news-cover{height:130px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.news-cover::before{content:"";position:absolute;inset:0;opacity:.12;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px}
+.news-lbl{position:relative;z-index:1;font-size:15px;font-weight:700;color:var(--gold)}
+.news-body{padding:12px 14px}
+.news-cat{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--bb);color:var(--bt);margin-bottom:6px;font-weight:700}
+.news-title{font-size:13px;font-weight:700;color:var(--t1);line-height:1.5;margin-bottom:7px}
+.news-meta{display:flex;gap:10px;font-size:11px;color:var(--t3)}
+.news-sm{display:flex;gap:10px;margin:0 16px 10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer}
+.ns-img{width:78px;height:78px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;position:relative;overflow:hidden}
+.ns-img::before{content:"";position:absolute;inset:0;opacity:.1;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:10px 10px}
+.ns-title{font-size:12px;color:var(--gold);position:relative;z-index:1}
+/* forum */
+.post-card{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.post-card:active{opacity:.9}
+.pc-hd{display:flex;align-items:center;gap:9px;padding:12px 14px 0}
+.u-av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.u-name{font-size:13px;font-weight:700;color:var(--t1)}
+.u-lv{font-size:9px;background:var(--bb);color:var(--bt);padding:1px 5px;border-radius:99px;margin-left:4px}
+.u-badge{font-size:9px;background:var(--gold);color:var(--navy);padding:1px 5px;border-radius:99px;margin-left:3px;font-weight:700}
+.pc-time{font-size:10px;color:var(--t3);margin-top:1px}
+.pc-body{padding:8px 14px}
+.pc-cat{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px;background:var(--bb);color:var(--bt);font-weight:700;margin-bottom:5px}
+.pc-title{font-size:14px;font-weight:700;color:var(--t1);line-height:1.4;margin-bottom:5px}
+.pc-text{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:8px}
+.pc-imgs{display:flex;gap:6px;margin-bottom:8px}
+.pc-img{width:72px;height:72px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.pc-foot{display:flex;align-items:center;gap:14px;padding:9px 14px;border-top:1px solid var(--border)}
+.pf-btn{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t3);cursor:pointer}
+.pf-btn.liked{color:var(--red)}
+.hot-badge{background:var(--rb);color:var(--rt);font-size:9px;padding:2px 7px;border-radius:99px;font-weight:700;margin-left:auto}
+/* comment system */
+.comment-item{padding:11px 14px;border-bottom:1px solid var(--border);background:var(--card)}
+.comment-item.reply{background:#fafbff;padding-left:48px}
+.ci-hd{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.ci-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.ci-name{font-size:12px;font-weight:700;color:var(--t1)}
+.ci-lv{font-size:9px;background:var(--bb);color:var(--bt);padding:1px 4px;border-radius:99px}
+.ci-time{font-size:10px;color:var(--t3);margin-left:auto}
+.ci-body{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:6px;padding-left:37px}
+.ci-emj{font-size:18px;padding-left:37px;margin-bottom:4px;line-height:1.8}
+.ci-foot{display:flex;gap:12px;padding-left:37px}
+.ci-like{font-size:11px;color:var(--t3);cursor:pointer;font-weight:500}
+.ci-like.on{color:var(--red)}
+.ci-reply-btn{font-size:11px;color:var(--t3);cursor:pointer}
+.comment-bar{padding:9px 14px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0;padding-bottom:calc(9px + env(safe-area-inset-bottom))}
+.emoji-row{display:flex;gap:6px;padding:5px 0 8px;overflow-x:auto;border-bottom:1px solid var(--border);margin-bottom:8px}
+.emoji-row::-webkit-scrollbar{display:none}
+.emo{font-size:22px;cursor:pointer;flex-shrink:0;padding:2px;border-radius:5px;line-height:1}
+.emo:active{transform:scale(1.3)}
+.cb-row{display:flex;gap:8px;align-items:flex-end}
+.cbi{flex:1;border:1px solid var(--border);border-radius:22px;padding:9px 14px;font-size:13px;background:var(--bg);color:var(--t1);outline:none;resize:none;min-height:38px;max-height:80px;line-height:1.4;font-family:inherit}
+.cb-send{background:var(--blue);color:#fff;border:none;border-radius:99px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer}
+.reply-hint{background:var(--bb);padding:5px 11px;font-size:11px;color:var(--bt);border-radius:7px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.react-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.react-btn{display:inline-flex;align-items:center;gap:3px;padding:4px 10px;border:1px solid var(--border);border-radius:99px;font-size:12px;color:var(--t2);cursor:pointer;transition:all .15s}
+.react-btn.on{background:var(--bb);border-color:var(--blue);color:var(--bt)}
+/* travel/blog */
+.blog-card{margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.bc-cover{height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden}
+.bc-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.4) 100%)}
+.bc-tags{position:absolute;top:10px;left:10px;display:flex;gap:5px;z-index:1}
+.bc-tag{font-size:10px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.92);color:var(--t1);font-weight:700}
+.bc-body{padding:12px 14px}
+.bc-author{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.bc-name{font-size:12px;font-weight:700;color:var(--t1)}
+.bc-role{font-size:10px;background:var(--gb);color:var(--gt);padding:1px 6px;border-radius:99px;margin-left:4px}
+.bc-time{font-size:10px;color:var(--t3);margin-left:auto}
+.bc-title{font-size:14px;font-weight:700;color:var(--t1);line-height:1.4;margin-bottom:5px}
+.bc-excerpt{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:8px}
+.bc-foot{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--t3)}
+.blog-sm{display:flex;gap:10px;margin:0 16px 10px;padding:12px 13px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer}
+.bs-thumb{width:80px;height:80px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0}
+/* shop */
+.shop-hero{background:var(--gold);padding:13px 16px;flex-shrink:0;position:relative;overflow:hidden}
+.shop-hero::before{content:"";position:absolute;inset:0;opacity:.1;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:10px 10px}
+.sh-z{position:relative;z-index:1}
+.vip-banner{margin:10px 16px 0;background:linear-gradient(135deg,var(--navy),#1a3080);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:11px;cursor:pointer}
+.vip-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:2px}
+.vip-sub{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5}
+.vip-price{font-size:16px;font-weight:700;color:var(--gold)}
+.vip-orig{font-size:11px;color:rgba(255,255,255,.4);text-decoration:line-through}
+.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 16px}
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.prod-card:active{transform:scale(.98)}
+.prod-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:44px;background:var(--bg);position:relative}
+.prod-sale-tag{position:absolute;top:8px;left:8px;background:var(--red);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700}
+.prod-vip-tag{position:absolute;top:8px;right:8px;background:var(--gold);color:var(--navy);font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700}
+.prod-body{padding:9px 11px}
+.prod-name{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px;line-height:1.4}
+.prod-spec{font-size:10px;color:var(--t3);margin-bottom:6px}
+.prod-price{font-size:15px;font-weight:700;color:var(--red)}
+.prod-orig{font-size:11px;color:var(--t3);text-decoration:line-through;margin-left:4px}
+.prod-foot{padding:7px 11px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.prod-sold{font-size:10px;color:var(--t3)}
+.prod-add{background:var(--blue);color:#fff;border:none;border-radius:99px;padding:4px 13px;font-size:11px;font-weight:700;cursor:pointer}
+/* notify */
+.wx-hero{background:#07c160;padding:14px 16px;flex-shrink:0;position:relative;overflow:hidden}
+.wx-hero::before{content:"";position:absolute;inset:0;opacity:.1;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:10px 10px}
+.wx-z{position:relative;z-index:1}
+.wx-qr-area{background:#fff;border-radius:12px;padding:13px;margin-top:10px;display:flex;align-items:center;gap:12px}
+.wx-qr{width:62px;height:62px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.wx-toggle{width:42px;height:23px;background:#e0e0e0;border-radius:99px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.wx-toggle.on{background:#07c160}
+.wx-thumb{position:absolute;top:3px;left:3px;width:17px;height:17px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.wx-toggle.on .wx-thumb{left:22px}
+.notif-item{padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+.notif-item.unread{border-left:3px solid var(--blue)}
+.ni-top{display:flex;justify-content:space-between;margin-bottom:5px;gap:8px}
+.ni-title{font-size:13px;font-weight:700;color:var(--t1);flex:1}
+.ni-time{font-size:10px;color:var(--t3)}
+/* chat */
+.chat-item{display:flex;gap:12px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.chat-item:active{background:var(--bg)}
+.ca{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+.cw-hd{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative;overflow:hidden}
+.cw-hd::before{content:"";position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px}
+.cw-body{flex:1;overflow-y:auto;padding:12px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.msg{max-width:72%;padding:10px 13px;font-size:14px;line-height:1.5}
+.msg.them{background:var(--card);border:1px solid var(--border);color:var(--t1);align-self:flex-start;border-radius:4px 14px 14px 14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.msg.me{background:var(--blue);color:#fff;align-self:flex-end;border-radius:14px 4px 14px 14px}
+.msg-time{font-size:10px;margin-top:4px;opacity:.55}
+.cw-input{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--card);flex-shrink:0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.chat-inp{flex:1;border:1px solid var(--border);border-radius:99px;padding:9px 15px;font-size:14px;background:var(--bg);color:var(--t1);outline:none}
+.send-btn{background:var(--blue);color:#fff;border:none;border-radius:99px;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer}
+/* resume */
+.r-hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.r-hero::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.r-inner{position:relative;z-index:1;padding:20px 16px 22px;text-align:center}
+.r-av{width:80px;height:80px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);overflow:hidden;cursor:pointer;position:relative}
+.r-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.av-up{position:absolute;bottom:2px;right:2px;width:22px;height:22px;background:var(--blue);border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#fff;z-index:2}
+.r-prog-track{height:5px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;margin:0 30px}
+.r-prog-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.rs-block{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.rs-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--border)}
+.rs-hd-t{font-size:13px;font-weight:700;color:var(--t1)}
+.rs-edit{font-size:12px;color:var(--blue);cursor:pointer}
+.rs-row{display:flex;padding:10px 14px;border-bottom:1px solid var(--border);align-items:flex-start;gap:10px}
+.rs-row:last-child{border-bottom:none}
+.rs-lbl{font-size:12px;color:var(--t3);width:72px;flex-shrink:0}
+.rs-val{font-size:13px;color:var(--t1);flex:1;line-height:1.5}
+.rs-inp{width:100%;border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:13px;background:var(--card);color:var(--t1);outline:none;font-family:inherit}
+.rs-ta{width:100%;border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:13px;background:var(--card);color:var(--t1);outline:none;resize:vertical;min-height:88px;line-height:1.6;font-family:inherit}
+.skill-grid{display:flex;flex-wrap:wrap;gap:7px;padding:12px 14px}
+.skill-tag{padding:5px 12px;background:var(--bb);color:var(--bt);border-radius:6px;font-size:12px;cursor:pointer;font-weight:500}
+.skill-tag.on{background:var(--blue);color:#fff}
+/* profile */
+.prof-hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.prof-hero::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.ph-z{position:relative;z-index:1;padding:20px 16px 18px;text-align:center}
+.prof-av{width:76px;height:76px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;margin:0 auto 12px;border:3px solid rgba(255,255,255,.25);cursor:pointer;overflow:hidden}
+.nick-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:3px}
+.prof-nick{font-size:19px;font-weight:700;color:#fff}
+.edit-btn2{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer}
+.prof-id{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:10px}
+.badge-row{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pb{font-size:10px;padding:3px 10px;border-radius:99px;font-weight:500}
+.pb-gold{background:var(--gold);color:var(--navy)}
+.pb-blue{background:var(--bb);color:var(--bt)}
+.pb-green{background:var(--gb);color:var(--gt)}
+.pb-pu{background:var(--pb);color:var(--pt)}
+.prof-stats{display:flex;border-top:1px solid rgba(255,255,255,.1);padding-top:13px}
+.pst{flex:1;text-align:center}
+.pst-n{font-size:17px;font-weight:700;color:var(--gold)}
+.pst-l{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.level-track{height:5px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden;margin:8px 20px 0}
+.level-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f0c040);border-radius:99px}
+.ps{margin:10px 16px 0;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.ps-hd{padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--t1)}
+.ps-row{display:flex;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer}
+.ps-row:last-child{border-bottom:none}
+.ps-ico{font-size:17px;width:28px;flex-shrink:0}
+.ps-lbl{font-size:13px;color:var(--t1);flex:1}
+.ps-val2{font-size:12px;color:var(--t3);margin-right:5px}
+.ps-arr{font-size:16px;color:var(--t3)}
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 14px}
+.ach{text-align:center;padding:10px 6px;background:var(--bg);border-radius:10px}
+.ach.locked{opacity:.4}
+.ach-ico{font-size:24px;display:block;margin-bottom:4px}
+.ach-name{font-size:10px;color:var(--t1);font-weight:700}
+.ach-desc{font-size:9px;color:var(--t3);margin-top:2px}
+/* campus */
+.campus-hero{background:linear-gradient(135deg,#1a5fb4,var(--navy));padding:16px;flex-shrink:0;position:relative;overflow:hidden}
+.campus-hero::before{content:"";position:absolute;inset:0;opacity:.07;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px}
+.camp-z{position:relative;z-index:1}
+.c-tabs{display:flex;background:rgba(255,255,255,.1);border-radius:9px;overflow:hidden}
+.ctab{flex:1;text-align:center;padding:7px 0;font-size:11px;color:rgba(255,255,255,.65);cursor:pointer}
+.ctab.on{background:#fff;color:var(--navy);font-weight:700}
+.campus-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:0 16px 10px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.cc-hd{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.cc-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.cc-meta-t{font-size:11px;color:var(--t2);line-height:1.5}
+.countdown-b{font-size:10px;background:var(--rb);color:var(--rt);padding:3px 8px;border-radius:99px;font-weight:700;white-space:nowrap}
+.hot-b{font-size:10px;background:var(--ab);color:var(--at);padding:3px 8px;border-radius:99px;font-weight:700}
+.cc-foot{padding:9px 13px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.cc-btn-p{padding:7px 15px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer}
+.cc-btn-s{padding:7px 15px;background:var(--bg);color:var(--t2);border:1px solid var(--border);border-radius:99px;font-size:12px;cursor:pointer}
+/* form blocks */
+.fb{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.fb-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:#fafafa;border-bottom:1px solid var(--border)}
+.fb-title{font-size:12px;font-weight:700;color:var(--t1)}
+.fb-badge{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500}
+.fb-row{display:flex;padding:9px 13px;border-bottom:1px solid var(--border);align-items:flex-start;gap:8px}
+.fb-row:last-child{border-bottom:none}
+.fb-lbl{font-size:11px;color:var(--t3);width:64px;flex-shrink:0;padding-top:2px}
+.fb-inp{flex:1;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;background:var(--card);color:var(--t1);outline:none;font-family:inherit}
+.fb-sel{flex:1;border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-size:12px;background:var(--card);color:var(--t1);outline:none}
+.upload-zone{flex:1;border:1.5px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:11px;color:var(--t3);background:var(--bg)}
+.upload-zone.done{border-color:#07c160;color:var(--gt);background:var(--gb)}
+.submit-btn{display:block;margin:10px 16px 4px;width:calc(100% - 32px);padding:13px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer}
+/* zhaosheng */
+.zs-hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.zs-hero::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.zz{position:relative;z-index:1;padding:13px 16px 17px}
+.zlbl{display:inline-block;background:rgba(201,162,39,.18);color:var(--gold);font-size:11px;padding:2px 9px;border-radius:99px;margin-bottom:8px;border:1px solid rgba(201,162,39,.3)}
+.ztitle{font-size:22px;font-weight:700;color:#fff;line-height:1.28;margin-bottom:5px}
+.zsub2{font-size:12px;color:rgba(255,255,255,.58);line-height:1.6;margin-bottom:13px}
+.zsrch{display:flex;background:#fff;border-radius:99px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.zsrch input{flex:1;border:none;padding:11px 15px;font-size:13px;outline:none;color:var(--navy);background:transparent}
+.zsrch-btn{background:var(--blue);color:#fff;border:none;padding:0 18px;font-size:12px;font-weight:700;cursor:pointer;border-radius:0 99px 99px 0}
+.zst-row{display:flex;margin-top:14px;border-top:1px solid rgba(255,255,255,.1);padding-top:13px}
+.zst{flex:1;text-align:center}
+.zstn{font-size:18px;font-weight:700;color:var(--gold)}
+.zstl{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
+.msec{padding:11px 16px 0}
+.ms-hd{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px}
+.ms-ln{flex:1;height:.5px;background:var(--border)}
+.mcard{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.mcard.on{border-color:var(--blue)}
+.mc-hd{padding:12px 14px;display:flex;align-items:center;gap:11px}
+.mc-code{font-size:13px;font-weight:700;padding:6px 10px;border-radius:8px;flex-shrink:0;font-family:monospace;letter-spacing:.3px}
+.mc-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.mc-meta2{font-size:11px;color:var(--t3)}
+.mc-arr{color:var(--t3);font-size:17px;margin-left:auto;flex-shrink:0;transition:transform .2s}
+.mcard.on .mc-arr{transform:rotate(90deg)}
+.mc-body{display:none;padding:10px 14px 14px;border-top:1px solid var(--border)}
+.mcard.on .mc-body{display:block}
+.mc-s{font-size:11px;font-weight:700;color:var(--t2);margin:9px 0 5px}
+.mc-txt{font-size:13px;color:var(--t2);line-height:1.75}
+.mc-req{display:flex;gap:7px;align-items:flex-start;margin-bottom:5px}
+.mc-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0}
+.mc-rt{font-size:13px;color:var(--t2);line-height:1.5}
+.mc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.mc-btn{width:100%;margin-top:10px;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;color:#fff}
+.scard{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.scard:active{opacity:.88}
+.sc-hd{padding:12px 14px 9px;display:flex;align-items:flex-start;gap:11px}
+.sc-av{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+.sc-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.sc-meta{font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+.lv-tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500}
+.sc-pills{display:flex;gap:5px;flex-wrap:wrap;padding:0 14px 10px}
+.sc-mpill{font-size:11px;padding:3px 9px;border-radius:99px;border:1px solid var(--border);color:var(--t2);cursor:pointer;background:#f9f9f9;font-family:monospace}
+.sc-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sc-score{flex:1;text-align:center}
+.sc-sn{font-size:15px;font-weight:700;color:var(--red)}
+.sc-sl{font-size:10px;color:var(--t3);margin-top:1px}
+.step-row{display:flex;gap:12px;align-items:flex-start}
+.step-n{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-b{flex:1;padding-bottom:16px;border-left:2px dashed var(--border);padding-left:14px;margin-left:-14px}
+.step-t{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.step-d{font-size:12px;color:var(--t2);line-height:1.7}
+.calc-box{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.cb-hd{padding:11px 14px;background:var(--ab);border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--at)}
+.cb-body{padding:13px 14px}
+.cb-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.cb-lbl{font-size:12px;color:var(--t2);width:56px;flex-shrink:0}
+.cb-inp{flex:1;border:1px solid var(--border);border-radius:9px;padding:9px 11px;font-size:13px;background:#f9f9f9;color:var(--t1);outline:none;font-family:inherit}
+.cb-btn{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+.sc-chart{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px}
+.scc-t{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:12px}
+.scc-body{display:flex;align-items:flex-end;gap:8px;height:88px}
+.scc-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.scc-bar{width:100%;background:var(--blue);border-radius:4px 4px 0 0;opacity:.82}
+.scc-yr{font-size:10px;color:var(--t3)}
+.scc-val{font-size:10px;font-weight:700;color:var(--bt)}
+/* cert */
+.cert-hero{background:var(--pu);position:relative;overflow:hidden;flex-shrink:0}
+.cert-hero::before{content:"";position:absolute;inset:0;opacity:.08;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:12px 12px}
+.cert-z{position:relative;z-index:1;padding:13px 16px 17px}
+.cert-lbl{display:inline-block;background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:2px 9px;border-radius:99px;margin-bottom:8px;border:1px solid rgba(255,255,255,.3)}
+.cert-title{font-size:22px;font-weight:700;color:#fff;line-height:1.28;margin-bottom:5px}
+.cert-sub{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:13px}
+.cert-tabs2{display:flex;background:rgba(255,255,255,.12);border-radius:9px;overflow:hidden}
+.ctab3{flex:1;text-align:center;padding:7px 0;font-size:11px;color:rgba(255,255,255,.65);cursor:pointer}
+.ctab3.on{background:#fff;color:var(--pu);font-weight:700}
+.cert-stats{display:flex;margin-top:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:13px}
+.cst{flex:1;text-align:center}
+.cstn{font-size:18px;font-weight:700;color:#f0c040}
+.cstl{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.cal-card{margin:10px 16px 0;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.cal-hd{padding:10px 14px;background:var(--pu);display:flex;align-items:center;justify-content:space-between}
+.cal-ht{font-size:13px;font-weight:700;color:#fff}
+.cal-nw{background:#f0c040;color:var(--pu);font-size:9px;padding:2px 7px;border-radius:99px;font-weight:700}
+.cal-item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}
+.cal-item:last-child{border-bottom:none}
+.cal-item:active{background:#f9f9f9}
+.cal-dt{text-align:center;width:38px;flex-shrink:0}
+.cal-m{font-size:10px;color:var(--t3)}
+.cal-d{font-size:21px;font-weight:700;color:var(--pu)}
+.cal-info{flex:1;min-width:0}
+.cal-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.cal-det{font-size:11px;color:var(--t2)}
+.cs-hot{font-size:10px;padding:3px 9px;border-radius:99px;font-weight:500;flex-shrink:0;background:var(--rb);color:var(--rt)}
+.cs-open{font-size:10px;padding:3px 9px;border-radius:99px;font-weight:500;flex-shrink:0;background:var(--gb);color:var(--gt)}
+.cs-soon{font-size:10px;padding:3px 9px;border-radius:99px;font-weight:500;flex-shrink:0;background:var(--ab);color:var(--at)}
+.cc{margin:0 16px 10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.cc:active{opacity:.88}
+.cc-hd2{display:flex;gap:11px;padding:12px 14px 9px;align-items:flex-start}
+.cc-ico{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cc-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.cc-meta{font-size:11px;color:var(--t2);line-height:1.55}
+.cc-hot-b{background:var(--rb);color:var(--rt);font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500;margin-left:5px}
+.cc-new-b{background:var(--gb);color:var(--gt);font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500;margin-left:5px}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap;padding:0 14px 10px}
+.cc-foot{padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cc-price{font-size:16px;font-weight:700;color:var(--red)}
+.cc-orig{font-size:12px;color:var(--t3);text-decoration:line-through;margin-left:5px}
+.cc-enroll{background:var(--pu);color:#fff;border:none;border-radius:99px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer}
+.my-cert-item{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.my-cert-item:last-child{border-bottom:none}
+.my-cert-ico{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+/* employer */
+.emp-hero{background:var(--navy);position:relative;overflow:hidden;flex-shrink:0}
+.emp-hero::before{content:"";position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px}
+.emp-z{position:relative;z-index:1;padding:13px 16px 17px}
+.emp-steps{display:flex;align-items:center;margin-bottom:14px}
+.est{flex:1;text-align:center}
+.est-n{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto 3px;transition:all .3s}
+.est-n.done{background:var(--gold);color:var(--navy)}
+.est-n.curr{background:#fff;color:var(--navy)}
+.est-n.todo{background:rgba(255,255,255,.15);color:rgba(255,255,255,.5)}
+.est-lbl{font-size:9px;color:rgba(255,255,255,.55)}
+.est-line{height:1px;background:rgba(255,255,255,.2);flex:1;margin-top:11px}
+.job-item{padding:11px 13px;border-bottom:1px solid var(--border)}
+.job-item:last-child{border-bottom:none}
+.ji-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.ji-meta{font-size:11px;color:var(--t3);margin-bottom:5px}
+.ji-actions{display:flex;gap:6px;margin-top:5px}
+.ji-btn{padding:4px 11px;border-radius:99px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--t2)}
+.ji-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.ji-btn.danger{color:var(--rt);border-color:var(--rb)}
+.cert-strip-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+.cert-strip-row::-webkit-scrollbar{display:none}
+.cert-co{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;flex-shrink:0}
+.cert-co-logo{width:17px;height:17px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700}
+/* wx notify */
+.wx-toggle{width:42px;height:23px;background:#e0e0e0;border-radius:99px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.wx-toggle.on{background:#07c160}
+.wx-thumb{position:absolute;top:3px;left:3px;width:17px;height:17px;background:#fff;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.wx-toggle.on .wx-thumb{left:22px}
+.ac-item{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border);cursor:pointer}
+.ac-item:last-child{border-bottom:none}
+.ac-item:active{background:#f9f9f9}
+.ac-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ac-btn{padding:5px 12px;border-radius:99px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--t2);font-weight:500}
+.ac-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.notif-item{padding:13px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+.notif-item.unread{border-left:3px solid var(--blue)}
+/* write forms */
+.wf-block{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.wf-hd{padding:10px 14px;background:#fafafa;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--t1)}
+.wf-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:9px;align-items:flex-start}
+.wf-row:last-child{border-bottom:none}
+.wf-lbl{font-size:12px;color:var(--t3);width:60px;flex-shrink:0;padding-top:2px}
+.wf-inp{flex:1;border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:13px;background:var(--card);color:var(--t1);outline:none;font-family:inherit}
+.wf-sel{flex:1;border:1px solid var(--border);border-radius:9px;padding:8px 11px;font-size:13px;background:var(--card);color:var(--t1);outline:none}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== LANDING ===== -->
+<div class="pg on" id="pg-land">
+  <div class="land">
+    <div class="lz">
+      <div class="l-logo"><div class="l-ico">✈</div><div style="font-size:22px;font-weight:700;color:#fff">乘务之家</div></div>
+      <div class="l-head">交通出行服务<br>一站式综合平台</div>
+      <div class="l-sub">招聘·招生·培训考证·社区·商城<br>服务航空·高铁·机场全行业</div>
+      <div class="pgrid">
+        <div class="pc gold" onclick="go('home')"><span class="pc-ico">🎓</span><div class="pc-name">我要求职</div><div class="pc-desc">浏览岗位、投递简历</div><button class="pc-btn" style="background:var(--gold);color:var(--navy)">进入求职端 →</button></div>
+        <div class="pc navy" onclick="go('employer')"><span class="pc-ico">🏢</span><div class="pc-name">用人单位</div><div class="pc-desc">入驻认证、发布岗位</div><button class="pc-btn" style="background:var(--blue);color:#fff">进入招聘端 →</button></div>
+        <div class="pc green" onclick="go('campus')"><span class="pc-ico">🏫</span><div class="pc-name">院校入口</div><div class="pc-desc">预约专场招聘会</div><button class="pc-btn" style="background:#1d9e75;color:#fff">院校端 →</button></div>
+        <div class="pc teal" onclick="go('zs')"><span class="pc-ico">📚</span><div class="pc-name">招生查询</div><div class="pc-desc">专业代码·院校·分数线</div><button class="pc-btn" style="background:#085041;color:#fff">查院校 →</button></div>
+        <div class="pc purple" onclick="go('cert')"><span class="pc-ico">🏅</span><div class="pc-name">培训考证</div><div class="pc-desc">乘务资质·在线报名</div><button class="pc-btn" style="background:var(--pu);color:#fff">去考证 →</button></div>
+        <div class="pc amber" onclick="go('shop')"><span class="pc-ico">🛍️</span><div class="pc-name">面试商城</div><div class="pc-desc">服装优品·会员特价</div><button class="pc-btn" style="background:#ba7517;color:#fff">去商城 →</button></div>
+      </div>
+      <div class="l-stats">
+        <div class="lst"><div class="lst-n">4,280</div><div class="lst-l">在招职位</div></div>
+        <div class="lst"><div class="lst-n">680+</div><div class="lst-l">合作院校</div></div>
+        <div class="lst"><div class="lst-n">12k+</div><div class="lst-l">考证学员</div></div>
+        <div class="lst"><div class="lst-n">68万+</div><div class="lst-l">注册用户</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div class="pg" id="pg-home">
+  <div style="flex:1;overflow-y:auto">
+    <div class="hero">
+      <div class="hz">
+        <div class="htb">
+          <div class="hlogo"><div class="hli">✈</div>乘务之家</div>
+          <div style="display:flex;gap:7px">
+            <button onclick="go('land')" style="background:rgba(255,255,255,.13);color:#fff;border:none;border-radius:99px;padding:5px 12px;font-size:11px;cursor:pointer">平台首页</button>
+            <button onclick="go('employer')" style="background:var(--gold);color:var(--navy);border:none;border-radius:99px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">用人单位</button>
+          </div>
+        </div>
+        <div class="hlbl">交通出行服务人才招聘平台</div>
+        <div class="htitle">航空·高铁·机场<br>全行业乘务招聘</div>
+        <div class="hsub">一站式求职 + 招生 + 培训考证，覆盖全行业乘务服务岗位</div>
+        <div class="hsearch"><input placeholder="搜索岗位、单位、城市..."/><button class="hsbtn">搜索</button></div>
+        <div class="hstats">
+          <div class="hst"><div class="hstn">4,280</div><div class="hstl">在招</div></div>
+          <div class="hst"><div class="hstn">680+</div><div class="hstl">合作院校</div></div>
+          <div class="hst"><div class="hstn">12k+</div><div class="hstl">考证学员</div></div>
+          <div class="hst"><div class="hstn">91%</div><div class="hstl">入职率</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="qmenu">
+      <div class="qm" onclick="go('campus')"><span class="qm-ico">🏫</span><div class="qm-lbl">院校专场</div></div>
+      <div class="qm" onclick="go('zs')"><span class="qm-badge badge-new">NEW</span><span class="qm-ico">📚</span><div class="qm-lbl">招生查询</div></div>
+      <div class="qm" onclick="go('cert')"><span class="qm-badge badge-hot">HOT</span><span class="qm-ico">🏅</span><div class="qm-lbl">培训考证</div></div>
+      <div class="qm" onclick="go('shop')"><span class="qm-ico">🛍️</span><div class="qm-lbl">面试商城</div></div>
+      <div class="qm" onclick="go('travel')"><span class="qm-ico">🗺️</span><div class="qm-lbl">出行攻略</div></div>
+      <div class="qm" onclick="go('forum')"><span class="qm-ico">💬</span><div class="qm-lbl">乘务社区</div></div>
+    </div>
+    <div class="sec-wrap">
+      <div class="sec-hd"><div class="sec-t">行业分类</div></div>
+      <div class="ind-grid">
+        <div class="ic on" onclick="selInd(this)"><span class="ic-ico">✈️</span><div class="ic-name">航空乘务</div><div class="ic-cnt">1,284个</div></div>
+        <div class="ic" onclick="selInd(this)"><span class="ic-ico">🚄</span><div class="ic-name">高铁乘务</div><div class="ic-cnt">876个</div></div>
+        <div class="ic" onclick="selInd(this)"><span class="ic-ico">🛫</span><div class="ic-name">机场地勤</div><div class="ic-cnt">654个</div></div>
+        <div class="ic" onclick="selInd(this)"><span class="ic-ico">🔐</span><div class="ic-name">安检员</div><div class="ic-cnt">428个</div></div>
+        <div class="ic" onclick="selInd(this)"><span class="ic-ico">🚇</span><div class="ic-name">地铁服务</div><div class="ic-cnt">392个</div></div>
+        <div class="ic" onclick="selInd(this)"><span class="ic-ico">🚢</span><div class="ic-name">邮轮船务</div><div class="ic-cnt">186个</div></div>
+      </div>
+    </div>
+    <div class="sec-wrap" style="padding-top:12px">
+      <div class="sec-hd"><div class="sec-t">✈ 热招职位</div><div class="sec-m" onclick="toast('查看全部职位')">全部 →</div></div>
+    </div>
+    <div class="jcard" onclick="go('detail')">
+      <div class="jc-in">
+        <div class="jc-top"><div class="jc-t">国际航线客舱乘务员</div><div class="jc-s">1.2万–1.8万</div></div>
+        <div class="jc-co"><div class="colog" style="background:var(--navy)">CA</div>中国国际航空 · 北京<span class="vb">✓ 认证</span></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag tbl">五险一金</span><span class="tag tgr">国际航线</span><span class="tag tam">应届可投</span></div>
+        <div class="jc-foot"><span>2小时前</span><span class="ddl">⏰ 截止5月15日</span></div>
+      </div>
+    </div>
+    <div class="jcard" onclick="go('detail')">
+      <div class="jc-in">
+        <div class="jc-top"><div class="jc-t">高铁乘务员（全国）</div><div class="jc-s">4,500–7,000</div></div>
+        <div class="jc-co"><div class="colog" style="background:#1a5fb4">CR</div>中国国家铁路集团 · 全国<span class="vb">✓ 认证</span></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag tpu">五险一金</span><span class="tag tgr">免费乘车</span><span class="tag tam">招200人</span></div>
+        <div class="jc-foot"><span>1天前</span><span class="ddl">⏰ 截止5月31日</span></div>
+      </div>
+    </div>
+    <div class="jcard" onclick="go('detail')">
+      <div class="jc-in">
+        <div class="jc-top"><div class="jc-t">头等舱高级乘务长</div><div class="jc-s">2.0万–2.8万</div></div>
+        <div class="jc-co"><div class="colog" style="background:#b00">MU</div>中国东方航空 · 上海<span class="vb">✓ 认证</span></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag tbl">五险一金</span><span class="tag tgr">头等舱专属</span><span class="tag tbl">3年经验</span></div>
+        <div class="jc-foot"><span>2天前</span><span class="ddl">⏰ 截止5月20日</span></div>
+      </div>
+    </div>
+    <div class="banner" style="background:linear-gradient(135deg,#085041,#1d9e75)" onclick="go('zs')">
+      <div><div class="bn-t">📚 招生查询 · 全国680+院校</div><div class="bn-s">专业代码详解 · 录取分数线 · 志愿估分</div></div>
+      <span style="font-size:22px;color:rgba(255,255,255,.8)">→</span>
+    </div>
+    <div class="banner" style="background:linear-gradient(135deg,#3c3489,var(--pu))" onclick="go('cert')">
+      <div><div class="bn-t">🏅 培训考证 · 12类乘务资质</div><div class="bn-s">急救证 · 普通话 · 安检 · 航空英语 · 形体</div></div>
+      <span style="font-size:22px;color:rgba(255,255,255,.8)">→</span>
+    </div>
+    <div class="sec-wrap" style="padding-top:4px">
+      <div class="sec-hd"><div class="sec-t">行业资讯</div><div class="sec-m" onclick="go('news')">全部 →</div></div>
+    </div>
+    <div class="news-card" onclick="go('news')">
+      <div class="news-cover" style="background:var(--navy)"><div class="news-lbl">✈ 2026 航空招聘季</div></div>
+      <div class="news-body"><span class="news-cat">招聘政策</span><div class="news-title">2026年春季航空乘务大招聘来袭，多家航司同步开放报名通道</div><div class="news-meta"><span>👁 12,480</span><span>💬 86</span><span>4小时前</span></div></div>
+    </div>
+    <div class="news-sm" onclick="go('forum')">
+      <div class="ns-img" style="background:#1a5fb4"><div class="ns-title">攻略</div></div>
+      <div style="flex:1;min-width:0"><span class="news-cat">面试攻略</span><div class="news-title" style="font-size:12px;margin-bottom:4px">国航2026初试技巧全解析，这10点一定要注意！</div><div class="news-meta"><span>👁 23,771</span><span>💬 154</span></div></div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni on" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('zs')"><span class="nic">📚</span>招生</div>
+    <div class="ni" onclick="go('cert')"><span class="nic">🏅</span>考证</div>
+    <div class="ni" onclick="go('notif')"><span class="nic">🔔</span>通知<div class="ni-dot"></div></div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== JOB DETAIL ===== -->
+<div class="pg" id="pg-detail">
+  <div class="det-hero">
+    <div class="det-z">
+      <button class="bbtn" onclick="go('home')" style="display:block;margin-bottom:10px;text-align:left">←</button>
+      <span class="det-icon">✈️</span>
+      <div class="det-title">国际航线客舱乘务员</div>
+      <div class="det-co">中国国际航空 · 北京 · 国有企业</div>
+      <div class="det-sal">1.2万–1.8万/月</div>
+    </div>
+  </div>
+  <div class="det-actions">
+    <div class="det-meta">📍 北京 &nbsp;·&nbsp; 招5人 &nbsp;·&nbsp; <span class="ddl">剩25天</span></div>
+    <div class="icon-btn" onclick="showShare()">📤 分享</div>
+    <div class="icon-btn" id="fav-btn" onclick="doFav()">☆ 收藏</div>
+  </div>
+  <div class="ddl-bar">⏰ 距截止还有 <strong>25</strong> 天，请尽快报名！</div>
+  <div style="flex:1;overflow-y:auto;padding:13px 16px">
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border-radius:10px;margin-bottom:12px">
+      <div style="width:44px;height:44px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0">CA</div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--t1)">中国国际航空 <span class="vb">✓ 认证</span></div><div style="font-size:11px;color:var(--t3);margin-top:2px">国有大型航空 · 成立1988年 · 员工25000+</div></div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:var(--t1);padding-bottom:6px;border-bottom:2px solid var(--blue);margin-bottom:10px">岗位职责</div>
+    <ul style="list-style:none;margin-bottom:12px">
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>负责国际/国内航线客舱全程服务，保障旅客飞行体验</li>
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>执行安全检查及应急处置程序，保障飞行安全</li>
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>提供餐饮服务，处理旅客特殊需求及投诉</li>
+    </ul>
+    <div style="font-size:13px;font-weight:700;color:var(--t1);padding-bottom:6px;border-bottom:2px solid var(--blue);margin-bottom:10px">任职要求</div>
+    <ul style="list-style:none;margin-bottom:12px">
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>身高163–175cm，形象气质佳，五官端正</li>
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>大专及以上学历，英语四级及以上</li>
+      <li style="display:flex;gap:7px;font-size:13px;color:var(--t2);padding:3px 0;line-height:1.6"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);margin-top:8px;flex-shrink:0"></div>普通话二甲及以上，无犯罪记录，身体健康</li>
+    </ul>
+    <div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:7px">薪资福利</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag tbl">五险一金</span><span class="tag tgr">飞行补贴</span><span class="tag tgr">免费机票</span><span class="tag tam">年终奖</span><span class="tag tbl">带薪年假</span><span class="tag tbl">住房补贴</span><span class="tag tgr">制服提供</span></div>
+    <button class="apply-btn" id="apply-btn" onclick="doApply()">立即报名</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ===== NEWS LIST ===== -->
+<div class="pg" id="pg-news">
+  <div class="pghd"><div class="pghd-z"><button class="bbtn" onclick="go('home')">←</button><div class="pghd-title">行业资讯</div></div></div>
+  <div style="display:flex;gap:6px;padding:9px 16px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--card)">
+    <div class="cfchip on" onclick="selF(this)">全部</div>
+    <div class="cfchip" onclick="selF(this)">招聘政策</div>
+    <div class="cfchip" onclick="selF(this)">面试攻略</div>
+    <div class="cfchip" onclick="selF(this)">行业动态</div>
+    <div class="cfchip" onclick="selF(this)">升学资讯</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding-top:10px">
+    <div class="news-card" onclick="go('forum')">
+      <div class="news-cover" style="background:var(--navy)"><div class="news-lbl">✈ 2026 航空招聘季</div></div>
+      <div class="news-body"><span class="news-cat">招聘政策</span><div class="news-title">2026年春季航空乘务大招聘来袭，多家航司同步开放报名通道</div><div class="news-meta"><span>来源：乘务之家</span><span>👁 12,480</span><span>💬 86</span><span>4小时前</span></div></div>
+    </div>
+    <div class="news-sm" onclick="go('forum')"><div class="ns-img" style="background:#1a5fb4"><div class="ns-title">政策</div></div><div style="flex:1;min-width:0"><span class="news-cat">政策解读</span><div class="news-title" style="font-size:12px;margin-bottom:4px">民航局发布新规：乘务员资质认证标准全面升级</div><div class="news-meta"><span>👁 8,234</span><span>💬 41</span><span>1天前</span></div></div></div>
+    <div class="news-sm" onclick="go('forum')"><div class="ns-img" style="background:var(--pu)"><div class="ns-title">攻略</div></div><div style="flex:1;min-width:0"><span class="news-cat">面试攻略</span><div class="news-title" style="font-size:12px;margin-bottom:4px">国航2026初试技巧全解析，这10点一定要注意！</div><div class="news-meta"><span>👁 23,771</span><span>💬 154</span><span>3天前</span></div></div></div>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- ===== FORUM ===== -->
+<div class="pg" id="pg-forum">
+  <div style="background:var(--navy);position:relative;overflow:hidden;flex-shrink:0">
+    <div style="position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px"></div>
+    <div style="position:relative;z-index:1;padding:13px 16px 15px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('home')">←</button><div style="font-size:16px;font-weight:700;color:#fff">✈ 乘务社区</div></div>
+        <button onclick="go('forum-write')" style="background:var(--gold);color:var(--navy);border:none;border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer">+ 发帖</button>
+      </div>
+      <div style="display:flex;background:rgba(255,255,255,.1);border-radius:9px;overflow:hidden">
+        <div class="ctab on" onclick="selCTab(this)">全部</div>
+        <div class="ctab" onclick="selCTab(this)">面试经验</div>
+        <div class="ctab" onclick="selCTab(this)">招聘资讯</div>
+        <div class="ctab" onclick="selCTab(this)">日常分享</div>
+        <div class="ctab" onclick="selCTab(this)">求助</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding-top:10px">
+    <div class="post-card" onclick="go('forum')" style="border-left:3px solid var(--gold)">
+      <div class="pc-hd"><div class="u-av" style="background:var(--blue);width:36px;height:36px;font-size:13px">官</div><div style="flex:1"><div class="u-name" style="color:var(--blue)">乘务之家官方<span class="u-badge">📌 置顶</span></div><div class="pc-time">常驻置顶</div></div></div>
+      <div class="pc-body"><div class="pc-cat">公告</div><div class="pc-title">【社区指南】面试经验区玩法全攻略，新人必看！</div></div>
+      <div class="pc-foot"><div class="pf-btn">❤️ 2,047</div><div class="pf-btn">💬 312</div><div class="pf-btn" style="margin-left:auto" onclick="event.stopPropagation();showShare()">📤</div></div>
+    </div>
+    <div class="post-card" onclick="go('post')">
+      <div class="pc-hd"><div class="u-av" style="background:var(--blue);width:36px;height:36px;font-size:13px">乘</div><div style="flex:1"><div class="u-name">✈晓雨同学<span class="u-lv">Lv.6</span><span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:99px;margin-left:3px">已上岸</span></div><div class="pc-time">35分钟前</div></div><div class="hot-badge">🔥 热议</div></div>
+      <div class="pc-body"><div class="pc-cat">面试经验</div><div class="pc-title">刚从国航初试回来！全程分享+表情包预警😭</div><div class="pc-text">今天终于体验了传说中的国航初试... 排了3小时队，走姿考核超严格，分享给大家！</div><div class="pc-imgs"><div class="pc-img" style="background:var(--bb)">✈️</div><div class="pc-img" style="background:var(--gb)">📋</div><div class="pc-img" style="background:var(--ab)">😭</div></div></div>
+      <div class="pc-foot"><div class="pf-btn liked" onclick="event.stopPropagation();pLike(this)">❤️ 247</div><div class="pf-btn">💬 89</div><div class="pf-btn" style="margin-left:auto" onclick="event.stopPropagation();showShare()">📤</div></div>
+    </div>
+    <div class="post-card" onclick="go('post')">
+      <div class="pc-hd"><div class="u-av" style="background:#27500a;width:36px;height:36px;font-size:13px">翠</div><div style="flex:1"><div class="u-name">翠鸟小姐姐<span class="u-lv">Lv.12</span></div><div class="pc-time">2小时前</div></div></div>
+      <div class="pc-body"><div class="pc-cat">招聘资讯</div><div class="pc-title">国航2026春招官方公告来了！附完整时间线和报名入口</div><div class="pc-text">刚刷到官网更新！截止5月15日，报名入口整理好了👇</div></div>
+      <div class="pc-foot"><div class="pf-btn" onclick="event.stopPropagation();pLike(this)">❤️ 183</div><div class="pf-btn">💬 54</div><div class="pf-btn" style="margin-left:auto" onclick="event.stopPropagation();showShare()">📤</div></div>
+    </div>
+    <div class="post-card" onclick="go('post')">
+      <div class="pc-hd"><div class="u-av" style="background:#854f0b;width:36px;height:36px;font-size:13px">飞</div><div style="flex:1"><div class="u-name">飞行的鱼<span class="u-lv">Lv.8</span></div><div class="pc-time">昨天</div></div></div>
+      <div class="pc-body"><div class="pc-cat">日常分享</div><div class="pc-title">第一次穿上制服的感觉，哭了😭 三年努力没白费！</div><div class="pc-text">给还在备考的姐妹们加油！拿到录取通知那一刻，所有泪水都值了 🥹</div><div class="pc-imgs"><div class="pc-img" style="background:var(--bb)">👗</div><div class="pc-img" style="background:var(--pb)">🥹</div></div></div>
+      <div class="pc-foot"><div class="pf-btn liked" onclick="event.stopPropagation();pLike(this)">❤️ 1.2k</div><div class="pf-btn">💬 214</div><div class="pf-btn" style="margin-left:auto">📤</div></div>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni on"><span class="nic">💬</span>社区</div>
+    <div class="ni" onclick="go('shop')"><span class="nic">🛍️</span>商城</div>
+    <div class="ni" onclick="go('travel')"><span class="nic">🗺️</span>攻略</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== POST DETAIL ===== -->
+<div class="pg" id="pg-post">
+  <div class="pghd">
+    <div class="pghd-z">
+      <button class="bbtn" onclick="go('forum')">←</button>
+      <div class="pghd-title">帖子详情</div>
+      <span style="color:rgba(255,255,255,.8);cursor:pointer;font-size:16px" onclick="showShare()">📤</span>
+      <span style="color:rgba(255,255,255,.8);cursor:pointer;margin-left:10px">⋯</span>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+    <div style="padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+        <div class="u-av" style="background:var(--blue);width:40px;height:40px;font-size:15px">乘</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1)">✈晓雨同学 <span class="u-lv">Lv.6</span> <span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:3px">已上岸</span></div><div style="font-size:10px;color:var(--t3);margin-top:1px">35分钟前 · 北京</div></div>
+        <button onclick="toast('已关注')" style="background:var(--bb);color:var(--bt);border:none;border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer">+ 关注</button>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:var(--t1);margin-bottom:10px;line-height:1.4">刚从国航初试回来！全程分享+表情包预警😭</div>
+      <div style="font-size:13px;color:var(--t2);line-height:1.85;margin-bottom:12px">今天终于体验了传说中的国航初试...<br><br>排了整整<strong style="color:var(--t1)">3小时的队</strong>，全程摄像监督，走姿考核比想象中严格！<br><br><strong style="color:var(--blue)">💡 重点提示：</strong><br>1. 提前1小时到场，避免堵车迟到<br>2. 妆容以清新自然为主，避免浓妆<br>3. 走姿考核很严，建议提前1个月练习<br>4. 自我介绍控制在90秒内，不能超时</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px"><div class="pc-img" style="background:var(--bb);width:80px;height:80px;border-radius:10px">✈️</div><div class="pc-img" style="background:var(--gb);width:80px;height:80px;border-radius:10px">📋</div><div class="pc-img" style="background:var(--ab);width:80px;height:80px;border-radius:10px">😭</div></div>
+      <div class="react-row">
+        <div class="react-btn on" onclick="toggleReact(this)">👍 <span>247</span></div>
+        <div class="react-btn" onclick="toggleReact(this)">😭 <span>89</span></div>
+        <div class="react-btn" onclick="toggleReact(this)">🥹 <span>134</span></div>
+        <div class="react-btn" onclick="toggleReact(this)">💪 <span>56</span></div>
+        <div class="react-btn" onclick="toggleReact(this)">🔥 <span>78</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding-top:9px;border-top:1px solid var(--border);margin-top:4px">
+        <div id="main-like" onclick="toggleMainLike()" style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);cursor:pointer;font-weight:500">❤️ <span>1,240</span> 点赞</div>
+        <div style="font-size:12px;color:var(--t3);cursor:pointer" onclick="document.getElementById('cbi').focus()">💬 89 评论</div>
+        <div id="bm" onclick="toast('已收藏帖子 ⭐')" style="font-size:12px;color:var(--gold);cursor:pointer;font-weight:500">⭐ 收藏</div>
+        <div style="margin-left:auto;font-size:12px;color:var(--t3);cursor:pointer" onclick="showShare()">📤 分享</div>
+      </div>
+    </div>
+    <div style="padding:9px 16px 5px;font-size:12px;font-weight:700;color:var(--t2);background:var(--bg);display:flex;align-items:center;justify-content:space-between">
+      <span>89条评论</span>
+      <div style="display:flex;gap:10px"><span style="font-size:11px;color:var(--blue);cursor:pointer">最新</span><span style="font-size:11px;color:var(--t3);cursor:pointer">最热</span></div>
+    </div>
+    <div id="comments">
+      <div class="comment-item"><div class="ci-hd"><div class="ci-av" style="background:#27500a">翠</div><div class="ci-name">翠鸟小姐姐<span class="ci-lv">Lv.12</span></div><div class="ci-time">28分钟前</div></div><div class="ci-body">谢谢分享！我下周也要去，请问走姿考核是单独走还是集体走？</div><div class="ci-foot"><div class="ci-like on" onclick="ciLike(this)">❤️ 34</div><div class="ci-reply-btn" onclick="setReply('翠鸟小姐姐')">回复</div></div></div>
+      <div class="comment-item reply"><div class="ci-hd"><div class="ci-av" style="background:var(--blue)">乘</div><div class="ci-name">✈晓雨同学<span class="ci-lv">Lv.6</span><span style="font-size:9px;background:var(--gold);color:var(--navy);padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:700">楼主</span></div><div class="ci-time">22分钟前</div></div><div class="ci-body">回复 <span style="color:var(--blue)">@翠鸟小姐姐</span>：单独走！一个一个来，考官其实挺温柔的</div><div class="ci-foot"><div class="ci-like on" onclick="ciLike(this)">❤️ 18</div><div class="ci-reply-btn" onclick="setReply('楼主')">回复</div></div></div>
+      <div class="comment-item"><div class="ci-hd"><div class="ci-av" style="background:#854f0b">飞</div><div class="ci-name">飞行的鱼<span class="ci-lv">Lv.8</span></div><div class="ci-time">1小时前</div></div><div class="ci-emj">😭😭💪</div><div class="ci-body">感同身受！我去年初试被刷了走姿，今年重新备考，加油大家！</div><div class="ci-foot"><div class="ci-like" onclick="ciLike(this)">❤️ 56</div><div class="ci-reply-btn" onclick="setReply('飞行的鱼')">回复</div></div></div>
+    </div>
+  </div>
+  <div class="comment-bar">
+    <div class="emoji-row">
+      <span class="emo" onclick="addEmoji('😭')">😭</span><span class="emo" onclick="addEmoji('🥹')">🥹</span><span class="emo" onclick="addEmoji('💪')">💪</span><span class="emo" onclick="addEmoji('✈️')">✈️</span><span class="emo" onclick="addEmoji('👑')">👑</span><span class="emo" onclick="addEmoji('🙏')">🙏</span><span class="emo" onclick="addEmoji('😂')">😂</span><span class="emo" onclick="addEmoji('❤️')">❤️</span><span class="emo" onclick="addEmoji('🎉')">🎉</span><span class="emo" onclick="addEmoji('🔥')">🔥</span><span class="emo" onclick="addEmoji('😍')">😍</span><span class="emo" onclick="addEmoji('👏')">👏</span><span class="emo" onclick="addEmoji('🤩')">🤩</span><span class="emo" onclick="addEmoji('🫡')">🫡</span>
+    </div>
+    <div id="reply-hint" style="display:none" class="reply-hint"><span id="reply-to">回复 @翠鸟小姐姐</span><span onclick="clearReply()" style="cursor:pointer;font-size:17px;color:var(--bt)">✕</span></div>
+    <div class="cb-row"><textarea class="cbi" id="cbi" placeholder="说点什么..." rows="1" oninput="autoR(this)"></textarea><button class="cb-send" onclick="sendCmt()">发送</button></div>
+  </div>
+</div>
+
+<!-- ===== FORUM WRITE ===== -->
+<div class="pg" id="pg-forum-write">
+  <div class="pghd"><div class="pghd-z"><button class="bbtn" onclick="go('forum')">←</button><div class="pghd-title">发布帖子</div><button onclick="pubPost()" style="background:var(--blue);color:#fff;border:none;border-radius:99px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer">发布</button></div></div>
+  <div style="flex:1;overflow-y:auto;padding:12px 16px">
+    <div class="wf-block"><div class="wf-hd">帖子内容</div><div class="wf-row"><div class="wf-lbl">分类</div><select class="wf-sel" style="flex:1"><option>面试经验</option><option>招聘资讯</option><option>日常分享</option><option>求助问答</option><option>上岸报告</option></select></div><div class="wf-row"><div class="wf-lbl">标题</div><input class="wf-inp" placeholder="起一个吸引人的标题（限60字）" maxlength="60"></div><div style="padding:10px 14px"><textarea class="wf-inp" style="width:100%;min-height:160px;resize:vertical;line-height:1.8" placeholder="分享你的经历和想法..."></textarea></div><div style="padding:0 14px 12px;display:flex;gap:8px"><div onclick="toast('照片选择')" style="width:60px;height:60px;border:1.5px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;color:var(--t3)">📷</div></div></div>
+    <div class="wf-block"><div class="wf-hd">话题标签</div><div style="padding:10px 14px;display:flex;gap:7px;flex-wrap:wrap"><div onclick="toggleTag(this)" style="padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--t2);cursor:pointer">#国航2026</div><div onclick="toggleTag(this)" style="padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--t2);cursor:pointer">#面试技巧</div><div onclick="toggleTag(this)" style="padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--t2);cursor:pointer">#已上岸</div><div onclick="toggleTag(this)" style="padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--t2);cursor:pointer">#走姿练习</div><div onclick="toggleTag(this)" style="padding:5px 12px;border-radius:99px;border:1px solid var(--border);font-size:12px;color:var(--t2);cursor:pointer">#航空乘务</div></div></div>
+    <button onclick="pubPost()" style="width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer">发布帖子</button>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- ===== TRAVEL ===== -->
+<div class="pg" id="pg-travel">
+  <div style="background:#0f6e56;position:relative;overflow:hidden;flex-shrink:0">
+    <div style="position:absolute;inset:0;opacity:.08;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px"></div>
+    <div style="position:relative;z-index:1;padding:13px 16px 15px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+        <div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('home')">←</button><div style="font-size:16px;font-weight:700;color:#fff">出行攻略</div></div>
+        <button onclick="go('blog-write')" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:99px;padding:5px 13px;font-size:11px;cursor:pointer">✏️ 写攻略</button>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.7);margin-bottom:10px">乘务人的专属出行圈 · 景区·美食·航司·酒店</div>
+      <div style="display:flex;background:rgba(255,255,255,.1);border-radius:9px;overflow:hidden">
+        <div class="ctab on" onclick="selCTab(this)">精选</div>
+        <div class="ctab" onclick="selCTab(this)">航司测评</div>
+        <div class="ctab" onclick="selCTab(this)">美食推荐</div>
+        <div class="ctab" onclick="selCTab(this)">酒店攻略</div>
+        <div class="ctab" onclick="selCTab(this)">景区探店</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <button onclick="go('blog-write')" style="display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 16px 12px;padding:12px;background:#0f6e56;color:#fff;border:none;border-radius:14px;font-size:13px;font-weight:700;cursor:pointer;width:calc(100% - 32px)">✏️ 发布你的出行攻略，成为推荐官</button>
+    <div class="blog-card" onclick="toast('进入攻略详情')">
+      <div class="bc-cover" style="background:#1d9e75"><div class="bc-overlay"></div><span style="font-size:64px;position:relative;z-index:1">🏖️</span><div class="bc-tags"><span class="bc-tag">🔥 本周最热</span><span class="bc-tag">✈ 航司测评</span></div></div>
+      <div class="bc-body"><div class="bc-author"><div class="u-av" style="background:var(--blue);width:30px;height:30px;font-size:12px">乘</div><div class="bc-name">✈晓雨同学<span class="bc-role">推荐官</span></div><div class="bc-time">2天前</div></div><div class="bc-title">乘务员视角深度测评：海南航空 vs 厦门航空，服务差在哪？</div><div class="bc-excerpt">在职乘务员角度深度体验两家航司，从座椅、餐食到乘务服务细节全方位对比...</div><div class="bc-foot"><span>👁 12,480</span><span>❤️ 847</span><span>💬 234</span><span style="margin-left:auto;cursor:pointer" onclick="showShare()">📤</span></div></div>
+    </div>
+    <div class="blog-sm" onclick="toast('进入攻略详情')"><div class="bs-thumb" style="background:#eaf3de">🍜</div><div style="flex:1;min-width:0"><div style="display:flex;gap:4px;margin-bottom:5px"><span class="tag tgr">美食</span><span class="tag tbl">成都</span></div><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px;line-height:1.4">飞成都航线必吃！机组推荐的5家苍蝇馆子</div><div style="font-size:11px;color:var(--t3);display:flex;gap:8px"><span>翠鸟小姐姐</span><span>👁 8,302</span><span>❤️ 612</span></div></div></div>
+    <div class="blog-sm" onclick="toast('进入攻略详情')"><div class="bs-thumb" style="background:#e6f1fb">🏨</div><div style="flex:1;min-width:0"><div style="display:flex;gap:4px;margin-bottom:5px"><span class="tag tbl">酒店</span><span class="tag tpu">上海</span></div><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px;line-height:1.4">机组协议价酒店大整理！上海10家高性价比选择</div><div style="font-size:11px;color:var(--t3);display:flex;gap:8px"><span>飞行的鱼</span><span>👁 15,673</span><span>❤️ 1.2k</span></div></div></div>
+    <div class="blog-sm" onclick="toast('进入攻略详情')"><div class="bs-thumb" style="background:#eeedfe">✈️</div><div style="flex:1;min-width:0"><div style="display:flex;gap:4px;margin-bottom:5px"><span class="tag tpu">航司测评</span></div><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px;line-height:1.4">国航VS东航：头等舱硬件和服务谁更值？深度对比报告</div><div style="font-size:11px;color:var(--t3);display:flex;gap:8px"><span>飞行的鱼</span><span>👁 22,341</span><span>❤️ 1.8k</span></div></div></div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('forum')"><span class="nic">💬</span>社区</div>
+    <div class="ni" onclick="go('shop')"><span class="nic">🛍️</span>商城</div>
+    <div class="ni on"><span class="nic">🗺️</span>攻略</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== BLOG WRITE ===== -->
+<div class="pg" id="pg-blog-write">
+  <div class="pghd"><div class="pghd-z"><button class="bbtn" onclick="go('travel')">←</button><div class="pghd-title">发布出行攻略</div><button onclick="toast('攻略已发布！审核通过后展示')" style="background:#0f6e56;color:#fff;border:none;border-radius:99px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer">发布</button></div></div>
+  <div style="flex:1;overflow-y:auto;padding:12px 16px">
+    <div class="wf-block"><div class="wf-hd">攻略基本信息</div><div class="wf-row"><div class="wf-lbl">标题</div><input class="wf-inp" placeholder="起一个吸引人的标题（限50字）" maxlength="50"></div><div class="wf-row"><div class="wf-lbl">分类</div><select class="wf-sel" style="flex:1"><option>航司测评</option><option>美食推荐</option><option>酒店攻略</option><option>景区探店</option><option>出行小贴士</option><option>机组生活</option></select></div><div class="wf-row"><div class="wf-lbl">相关城市</div><input class="wf-inp" placeholder="如：成都、三亚、北京..."></div><div class="wf-row" style="border-bottom:none"><div class="wf-lbl">封面图</div><div onclick="toast('选择封面图片')" style="flex:1;height:50px;border:1.5px dashed var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t3);cursor:pointer">📷 点击选择封面图</div></div></div>
+    <div class="wf-block"><div class="wf-hd">攻略正文</div><div style="padding:10px 14px"><textarea class="wf-inp" style="width:100%;min-height:200px;resize:vertical;line-height:1.8" placeholder="分享你的真实体验..."></textarea></div><div style="padding:0 14px 12px;display:flex;gap:8px;flex-wrap:wrap"><div onclick="toast('选择图片')" style="width:60px;height:60px;border:1.5px dashed var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer">📷</div></div></div>
+    <button onclick="toast('攻略已发布！审核通过后展示')" style="width:100%;padding:14px;background:#0f6e56;color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer">发布攻略</button>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- ===== SHOP ===== -->
+<div class="pg" id="pg-shop">
+  <div class="shop-hero">
+    <div class="sh-z">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:7px"><button onclick="go('home')" class="bbtn" style="color:var(--navy)">←</button><div style="font-size:17px;font-weight:700;color:var(--navy)">✈ 面试商城</div></div>
+        <div style="position:relative;cursor:pointer" onclick="toast('购物车共 '+cartN+' 件')"><span style="font-size:24px">🛒</span><div id="cart-badge" style="position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-size:9px;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">3</div></div>
+      </div>
+      <div style="font-size:11px;color:rgba(7,29,94,.65);margin-bottom:9px">专为乘务求职者精选 · 物美价廉 · 会员专享折扣</div>
+      <div style="display:flex;background:#fff;border-radius:99px;overflow:hidden"><input style="flex:1;border:none;padding:9px 14px;font-size:12px;outline:none;color:var(--navy);background:transparent" placeholder="搜索面试必备好物..."><button onclick="toast('搜索商品')" style="background:var(--navy);color:#fff;border:none;padding:0 15px;font-size:11px;font-weight:700;cursor:pointer;border-radius:0 99px 99px 0">搜索</button></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;padding:8px 16px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0">
+    <div class="cfchip on" onclick="selF(this)">全部</div>
+    <div class="cfchip" onclick="selF(this)">面试服装</div>
+    <div class="cfchip" onclick="selF(this)">妆容美护</div>
+    <div class="cfchip" onclick="selF(this)">形体练习</div>
+    <div class="cfchip" onclick="selF(this)">行李箱包</div>
+    <div class="cfchip" onclick="selF(this)">证件照服务</div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="vip-banner" onclick="toast('¥39/季开通会员，全场9折+包邮')">
+      <div style="font-size:28px">👑</div>
+      <div style="flex:1"><div class="vip-title">开通乘务优选会员</div><div class="vip-sub">全场享9折 · 包邮 · 专属面试顾问 · 退换无忧</div></div>
+      <div style="text-align:right"><div class="vip-price">¥39/季</div><div class="vip-orig">¥99</div><button onclick="event.stopPropagation();toast('已开通会员！')" style="margin-top:5px;background:var(--gold);color:var(--navy);border:none;border-radius:99px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer">立即开通</button></div>
+    </div>
+    <div style="padding:12px 16px 4px;font-size:14px;font-weight:700;color:var(--t1)">👗 面试服装</div>
+    <div class="prod-grid">
+      <div class="prod-card" onclick="addCart()"><div class="prod-img"><div class="prod-sale-tag">-44%</div><div class="prod-vip-tag">会员</div>👗</div><div class="prod-body"><div class="prod-name">空姐风OL职业套装（藏青）</div><div class="prod-spec">面试必备 · S/M/L/XL</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥168</span><span class="prod-orig">¥298</span></div></div><div class="prod-foot"><div class="prod-sold">已售1,284</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+      <div class="prod-card" onclick="addCart()"><div class="prod-img"><div class="prod-sale-tag">-44%</div>👠</div><div class="prod-body"><div class="prod-name">空乘面试低跟皮鞋（黑色）</div><div class="prod-spec">3cm跟 · 防滑底 · 35-40码</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥89</span><span class="prod-orig">¥158</span></div></div><div class="prod-foot"><div class="prod-sold">已售876</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+      <div class="prod-card" onclick="addCart()"><div class="prod-img"><div class="prod-sale-tag">-46%</div>💄</div><div class="prod-body"><div class="prod-name">面试妆容套装（清新款）</div><div class="prod-spec">粉底液+口红+眉笔</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥128</span><span class="prod-orig">¥239</span></div></div><div class="prod-foot"><div class="prod-sold">已售2,301</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+      <div class="prod-card" onclick="addCart()"><div class="prod-img"><div class="prod-sale-tag">-48%</div>🧳</div><div class="prod-body"><div class="prod-name">轻便登机箱20寸（多色）</div><div class="prod-spec">航空规格·静音万向轮</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥199</span><span class="prod-orig">¥380</span></div></div><div class="prod-foot"><div class="prod-sold">已售543</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+      <div class="prod-card" onclick="addCart()"><div class="prod-img">📸</div><div class="prod-body"><div class="prod-name">证件照精修服务（线上）</div><div class="prod-spec">4小时出图·5张精修</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥19</span><span class="prod-orig">¥49</span></div></div><div class="prod-foot"><div class="prod-sold">已售4,821</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+      <div class="prod-card" onclick="addCart()"><div class="prod-img">🪮</div><div class="prod-body"><div class="prod-name">空乘盘发发网+发夹套装</div><div class="prod-spec">丸子头专用·20件套</div><div style="display:flex;align-items:baseline;gap:4px"><span class="prod-price">¥29</span><span class="prod-orig">¥59</span></div></div><div class="prod-foot"><div class="prod-sold">已售6,102</div><button class="prod-add" onclick="event.stopPropagation();addCart()">+购物车</button></div></div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('forum')"><span class="nic">💬</span>社区</div>
+    <div class="ni on"><span class="nic">🛍️</span>商城</div>
+    <div class="ni" onclick="go('travel')"><span class="nic">🗺️</span>攻略</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== NOTIF ===== -->
+<div class="pg" id="pg-notif">
+  <div style="background:#07c160;padding:14px 16px;flex-shrink:0;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;opacity:.1;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:10px 10px"></div>
+    <div style="position:relative;z-index:1">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px">💬</div><div><div style="font-size:16px;font-weight:700;color:#fff">微信服务号通知</div><div style="font-size:11px;color:rgba(255,255,255,.75)">活动开始前精准提醒，不错过任何机会</div></div></div>
+      <div style="background:#fff;border-radius:12px;padding:13px;display:flex;align-items:center;gap:12px">
+        <div style="width:62px;height:62px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📱</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px">扫码关注「乘务之家」服务号</div><div style="font-size:11px;color:var(--t2);line-height:1.5">关注后绑定账号，接收面试通知、活动推送</div><button id="wx-bind" onclick="bindWx()" style="margin-top:8px;background:#07c160;color:#fff;border:none;border-radius:99px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer">立即绑定账号</button></div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="iblock" style="margin:10px 16px 0">
+      <div class="ib-hd" style="display:flex;align-items:center;justify-content:space-between">推送设置<span style="font-size:11px;color:var(--t3);font-weight:400">全部开启即可第一时间通知</span></div>
+      <div class="ib-row"><div class="ib-k">面试邀请</div><div class="wx-toggle on" onclick="toggleSwitch(this)"><div class="wx-thumb"></div></div></div>
+      <div class="ib-row"><div class="ib-k">招聘截止</div><div class="wx-toggle on" onclick="toggleSwitch(this)"><div class="wx-thumb"></div></div></div>
+      <div class="ib-row"><div class="ib-k">录取通知</div><div class="wx-toggle on" onclick="toggleSwitch(this)"><div class="wx-thumb"></div></div></div>
+      <div class="ib-row" style="border-bottom:none"><div class="ib-k">活动提醒</div><div class="wx-toggle on" onclick="toggleSwitch(this)"><div class="wx-thumb"></div></div></div>
+    </div>
+    <div style="margin:10px 16px 0;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+      <div style="padding:10px 13px;background:var(--navy);display:flex;align-items:center;justify-content:space-between"><div style="font-size:13px;font-weight:700;color:#fff">活动提醒订阅</div><div style="background:var(--gold);color:var(--navy);font-size:9px;padding:2px 7px;border-radius:99px;font-weight:700">NEW</div></div>
+      <div class="ac-item" onclick="toggleAct(this)"><div class="ac-ico" style="background:var(--bb)">✈️</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px">国航2026校园招聘宣讲会</div><div style="font-size:11px;color:var(--t2);line-height:1.5">北京航空航天大学 · 现场报名通道开放</div><div style="font-size:10px;color:var(--t3);margin-top:2px">📅 2026-04-28 14:00 · 还有8天</div></div><button class="ac-btn on">已提醒</button></div>
+      <div class="ac-item" onclick="toggleAct(this)"><div class="ac-ico" style="background:var(--ab)">👑</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px">东航头等舱专场面试开放日</div><div style="font-size:11px;color:var(--t2)">上海虹桥 · 限额50名</div><div style="font-size:10px;color:var(--t3);margin-top:2px">📅 2026-05-03 09:00 · 还有13天</div></div><button class="ac-btn">提醒我</button></div>
+      <div class="ac-item" style="border-bottom:none" onclick="toggleAct(this)"><div class="ac-ico" style="background:var(--gb)">💼</div><div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px">公务机乘务专项培训体验日</div><div style="font-size:11px;color:var(--t2)">北京首都机场 · 免费参加</div><div style="font-size:10px;color:var(--t3);margin-top:2px">📅 2026-05-10 10:00 · 还有20天</div></div><button class="ac-btn">提醒我</button></div>
+    </div>
+    <div style="padding:10px 16px 5px;font-size:13px;font-weight:700;color:var(--t1);margin-top:4px">报名进度通知</div>
+    <div style="padding:0 16px">
+      <div class="notif-item unread"><div class="ni-top"><div class="ni-title">面试邀请 · 国际航线乘务员</div><div class="ni-time">今天 09:30</div></div><div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">中国国际航空邀请您本周五10:00至北京总部参加初试</div><span style="font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;background:var(--bb);color:var(--bt)">📅 邀请面试</span></div>
+      <div class="notif-item unread"><div class="ni-top"><div class="ni-title">录取通知 · 暑期实习乘务员</div><div class="ni-time">3天前</div></div><div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">深圳航空通知您已通过全部面试，录用通知书将在5个工作日内寄出</div><span style="font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;background:var(--gb);color:var(--gt)">✓ 已录取</span></div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('zs')"><span class="nic">📚</span>招生</div>
+    <div class="ni" onclick="go('cert')"><span class="nic">🏅</span>考证</div>
+    <div class="ni on"><span class="nic">🔔</span>通知</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== CHAT LIST ===== -->
+<div class="pg" id="pg-chat">
+  <div class="pghd"><div class="pghd-z"><button class="bbtn" onclick="go('home')">←</button><div class="pghd-title">💬 消息</div></div></div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="chat-item" onclick="go('chat-win')"><div class="ca" style="background:var(--navy);width:44px;height:44px;font-size:16px">国</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">国航 HR · 张招聘</div><div style="font-size:12px;color:var(--t3)">请问您本周五方便参加面试吗？</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--t3)">09:32</div><div style="width:8px;height:8px;background:var(--red);border-radius:50%;margin-left:auto;margin-top:4px"></div></div></div>
+    <div class="chat-item"><div class="ca" style="background:#b00;width:44px;height:44px;font-size:16px">东</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">东航 招聘中心</div><div style="font-size:12px;color:var(--t3)">您的材料已收到，请等待审核</div></div><div style="font-size:11px;color:var(--t3)">昨天</div></div>
+    <div class="chat-item"><div class="ca" style="background:#27500a;width:44px;height:44px;font-size:16px">客</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px">乘务之家 官方客服</div><div style="font-size:12px;color:var(--t3)">欢迎加入乘务之家，有问题随时联系</div></div><div style="font-size:11px;color:var(--t3)">3天前</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAT WIN ===== -->
+<div class="pg" id="pg-chat-win">
+  <div class="cw-hd"><div style="display:flex;align-items:center;gap:10px;position:relative;z-index:1;width:100%"><button class="bbtn" onclick="go('chat')">←</button><div class="ca" style="background:rgba(255,255,255,.2);width:34px;height:34px;font-size:13px;flex-shrink:0">国</div><div><div style="font-size:14px;font-weight:700;color:#fff">国航 HR · 张招聘</div><div style="font-size:11px;color:rgba(255,255,255,.6)">在线</div></div></div></div>
+  <div class="cw-body" id="cw-body">
+    <div class="msg them">您好！我是国航招聘专员，看到您投递了国际航线乘务员岗位 😊<div class="msg-time">09:30</div></div>
+    <div class="msg them">请问您本周五上午10点方便来北京总部参加初试面试吗？<div class="msg-time">09:32</div></div>
+  </div>
+  <div class="cw-input"><input class="chat-inp" id="chat-inp" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send-btn" onclick="sendMsg()">发送</button></div>
+</div>
+
+<!-- ===== RESUME ===== -->
+<div class="pg" id="pg-resume">
+  <div class="r-hero">
+    <div style="position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:14px 14px"></div>
+    <div class="r-inner">
+      <div style="position:relative;width:80px;margin:0 auto 12px"><div class="r-av" id="r-av" onclick="document.getElementById('pi').click()">李</div><div class="av-up" onclick="document.getElementById('pi').click()">+</div><input type="file" id="pi" accept="image/*" style="display:none" onchange="upPhoto(event)"></div>
+      <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">李晓雨</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:10px">求职中 · 已投递4个职位</div>
+      <div class="r-prog-track"><div class="r-prog-fill" id="r-fill" style="width:72%"></div></div>
+      <div style="font-size:10px;color:rgba(255,255,255,.5);text-align:right;margin-top:3px;margin-right:30px">档案完整度 72%</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:12px 16px">
+    <div class="rs-block">
+      <div class="rs-hd"><div class="rs-hd-t">基本信息</div><div class="rs-edit" onclick="toggleRS('basic')">编辑</div></div>
+      <div id="basic-v"><div class="rs-row"><div class="rs-lbl">姓名</div><div class="rs-val">李晓雨</div></div><div class="rs-row"><div class="rs-lbl">性别</div><div class="rs-val">女</div></div><div class="rs-row"><div class="rs-lbl">手机</div><div class="rs-val">138 **** 5566</div></div><div class="rs-row" style="border-bottom:none"><div class="rs-lbl">所在城市</div><div class="rs-val">北京市</div></div></div>
+      <div id="basic-e" style="display:none"><div class="rs-row"><div class="rs-lbl">姓名</div><input class="rs-inp" value="李晓雨"></div><div class="rs-row" style="border-bottom:none"><div class="rs-lbl">城市</div><input class="rs-inp" value="北京市"></div><div style="padding:10px 14px"><button onclick="toggleRS('basic')" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">保存</button></div></div>
+    </div>
+    <div class="rs-block">
+      <div class="rs-hd"><div class="rs-hd-t">形象条件</div><div class="rs-edit" onclick="toggleRS('appear')">编辑</div></div>
+      <div id="appear-v"><div class="rs-row"><div class="rs-lbl">身高</div><div class="rs-val">168 cm</div></div><div class="rs-row"><div class="rs-lbl">视力</div><div class="rs-val">左5.0 / 右5.0（裸眼）</div></div><div class="rs-row" style="border-bottom:none"><div class="rs-lbl">普通话</div><div class="rs-val">二级甲等</div></div></div>
+      <div id="appear-e" style="display:none"><div class="rs-row"><div class="rs-lbl">身高(cm)</div><input class="rs-inp" type="number" value="168"></div><div class="rs-row" style="border-bottom:none"><div class="rs-lbl">普通话</div><select class="rs-inp"><option>二级甲等</option><option>一级乙等</option><option>一级甲等</option></select></div><div style="padding:10px 14px"><button onclick="toggleRS('appear')" style="width:100%;padding:10px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">保存</button></div></div>
+    </div>
+    <div class="rs-block">
+      <div class="rs-hd"><div class="rs-hd-t">技能 &amp; 证书</div></div>
+      <div class="skill-grid"><div class="skill-tag on" onclick="this.classList.toggle('on')">急救证书</div><div class="skill-tag on" onclick="this.classList.toggle('on')">普通话等级证</div><div class="skill-tag" onclick="this.classList.toggle('on')">英语六级</div><div class="skill-tag on" onclick="this.classList.toggle('on')">安全培训证</div><div class="skill-tag" onclick="this.classList.toggle('on')">日语 N2</div><div class="skill-tag" onclick="this.classList.toggle('on')">形体礼仪证</div></div>
+    </div>
+    <div class="rs-block">
+      <div class="rs-hd"><div class="rs-hd-t">自我介绍</div><div id="intro-cnt" style="font-size:11px;color:var(--t3)">86/300字</div></div>
+      <div style="padding:12px 14px"><textarea class="rs-ta" id="intro-ta" maxlength="300" oninput="cntIntro(this)">本人形象气质佳，身高168cm，普通话二甲，英语口语流利。曾在深圳航空完成9个月乘务实习，熟悉客舱服务流程及安全规范，具备良好服务意识。性格开朗，热爱乘务事业。</textarea></div>
+    </div>
+    <div class="rs-block">
+      <div class="rs-hd"><div class="rs-hd-t">形象照片</div></div>
+      <div style="padding:13px;display:flex;gap:12px">
+        <div id="pp" onclick="document.getElementById('pi').click()" style="width:72px;height:90px;background:var(--bg);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t3);text-align:center;cursor:pointer;overflow:hidden">点击上传</div>
+        <div style="flex:1;font-size:12px;color:var(--t2);line-height:1.9">· 近6个月内证件照或生活照<br>· 背景纯色，着装正式整洁<br>· JPG/PNG，大小≤5MB<br><button onclick="document.getElementById('pi').click()" style="margin-top:8px;padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">选择照片</button></div>
+      </div>
+    </div>
+    <button onclick="saveResume()" style="width:100%;margin-bottom:10px;padding:13px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer">保存并发布档案</button>
+    <div style="height:8px"></div>
+  </div>
+</div>
+
+<!-- ===== PROFILE ===== -->
+<div class="pg" id="pg-profile">
+  <div class="prof-hero">
+    <div class="ph-z">
+      <div class="prof-av" onclick="toast('点击更换头像')">李</div>
+      <div class="nick-row"><div class="prof-nick" id="prof-nick">✈晓雨同学</div><button class="edit-btn2" onclick="showModal()">改名</button></div>
+      <div class="prof-id">ID: CW-28847 · 加入于 2025年9月</div>
+      <div class="badge-row"><span class="pb pb-gold">✈ 乘务达人</span><span class="pb pb-blue">Lv.6 活跃用户</span><span class="pb pb-green">已上岸</span><span class="pb pb-pu">推荐官</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.55);margin:12px 20px 4px">
+        <span>Lv.6 活跃用户</span><span>还差 340 经验升 Lv.7</span>
+      </div>
+      <div class="level-track"><div class="level-fill" style="width:68%"></div></div>
+      <div class="prof-stats" style="margin-top:13px">
+        <div class="pst"><div class="pst-n">247</div><div class="pst-l">获赞</div></div>
+        <div class="pst"><div class="pst-n">89</div><div class="pst-l">发帖</div></div>
+        <div class="pst"><div class="pst-n">1.2k</div><div class="pst-l">关注者</div></div>
+        <div class="pst"><div class="pst-n">234</div><div class="pst-l">关注中</div></div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="ps">
+      <div class="ps-hd">账号设置</div>
+      <div class="ps-row" onclick="showModal()"><div class="ps-ico">✏️</div><div class="ps-lbl">网名</div><div class="ps-val2" id="ps-val">✈晓雨同学</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" onclick="toast('编辑个性签名')"><div class="ps-ico">💬</div><div class="ps-lbl">个性签名</div><div class="ps-val2">热爱蓝天，努力上岸中~</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" onclick="toast('修改手机号')"><div class="ps-ico">📱</div><div class="ps-lbl">手机号</div><div class="ps-val2">138 **** 5566</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" style="border-bottom:none" onclick="toast('微信已绑定')"><div class="ps-ico">💚</div><div class="ps-lbl">微信绑定</div><div class="ps-val2" style="color:#07c160">✓ 已绑定</div><div class="ps-arr">›</div></div>
+    </div>
+    <div class="ps">
+      <div class="ps-hd">我的内容</div>
+      <div class="ps-row" onclick="go('forum')"><div class="ps-ico">📝</div><div class="ps-lbl">我的帖子</div><div class="ps-val2">89 篇</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" onclick="go('resume')"><div class="ps-ico">📋</div><div class="ps-lbl">我的档案</div><div class="ps-val2">完整度72%</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" onclick="go('cert')"><div class="ps-ico">🏅</div><div class="ps-lbl">我的证书</div><div class="ps-val2">2本有效</div><div class="ps-arr">›</div></div>
+      <div class="ps-row" style="border-bottom:none" onclick="go('notif')"><div class="ps-ico">📊</div><div class="ps-lbl">报名状态</div><div class="ps-val2">3个进行中</div><div class="ps-arr">›</div></div>
+    </div>
+    <div class="ps" style="margin-bottom:10px">
+      <div class="ps-hd">我的成就</div>
+      <div class="ach-grid">
+        <div class="ach"><span class="ach-ico">✈️</span><div class="ach-name">初次上岸</div><div class="ach-desc">通过第一次面试</div></div>
+        <div class="ach"><span class="ach-ico">🏆</span><div class="ach-name">百帖达人</div><div class="ach-desc">累计发帖100篇</div></div>
+        <div class="ach"><span class="ach-ico">❤️</span><div class="ach-name">人气之星</div><div class="ach-desc">获赞超200次</div></div>
+        <div class="ach"><span class="ach-ico">🌟</span><div class="ach-name">推荐官</div><div class="ach-desc">发布优质攻略</div></div>
+        <div class="ach locked"><span class="ach-ico">👑</span><div class="ach-name">乘务导师</div><div class="ach-desc">帮助50人上岸</div></div>
+        <div class="ach locked"><span class="ach-ico">🚀</span><div class="ach-name">年度达人</div><div class="ach-desc">年度活跃第一</div></div>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('zs')"><span class="nic">📚</span>招生</div>
+    <div class="ni" onclick="go('cert')"><span class="nic">🏅</span>考证</div>
+    <div class="ni" onclick="go('notif')"><span class="nic">🔔</span>通知</div>
+    <div class="ni on"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== CAMPUS ===== -->
+<div class="pg" id="pg-campus">
+  <div class="campus-hero">
+    <div class="camp-z">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('home')">←</button><div style="font-size:16px;font-weight:700;color:#fff">院校专场招聘</div></div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.65);margin-bottom:12px">院校提交需求 → 平台审核 → 对接用人单位 → 确定时间 → 组织专场</div>
+      <div class="c-tabs">
+        <div class="ctab on" onclick="selCampTab(this,'events')">招聘会活动</div>
+        <div class="ctab" onclick="selCampTab(this,'apply')">院校申请</div>
+        <div class="ctab" onclick="selCampTab(this,'my')">我的预约</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto" id="campus-scroll">
+    <div id="camp-events">
+      <div style="padding:9px 16px 4px;font-size:11px;color:var(--t2)">近期专场招聘会 · 可报名参加</div>
+      <div class="campus-card"><div class="cc-hd"><div><div class="cc-title">国航2026春季校园招聘专场</div><div class="cc-meta-t">北京航空航天大学 × 中国国际航空</div></div><div class="countdown-b">还有8天</div></div><div style="padding:10px 13px"><div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);margin-bottom:5px"><span style="font-size:13px;width:18px">📅</span><span>2026-04-28 &nbsp;14:00–17:00</span></div><div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);margin-bottom:5px"><span style="font-size:13px;width:18px">📍</span><span>北航逸夫楼报告厅</span></div><div style="display:flex;gap:5px;margin-top:6px"><span class="tag tbl">现场投递</span><span class="tag tgr">当场面试</span></div></div><div class="cc-foot"><button class="cc-btn-p" onclick="toast('已报名！校历提醒已添加')">立即报名</button><button class="cc-btn-s" onclick="showShare()">分享</button><div style="flex:1;text-align:right;font-size:10px;color:var(--t3)">已报名 <strong>127</strong>/300</div></div></div>
+      <div class="campus-card"><div class="cc-hd"><div><div class="cc-title">铁路系统双选会（华东区）</div><div class="cc-meta-t">上海交通大学 × 中国国家铁路集团</div></div><div class="hot-b">🔥 热门</div></div><div style="padding:10px 13px"><div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2);margin-bottom:5px"><span style="font-size:13px;width:18px">📅</span><span>2026-05-06 &nbsp;09:00–16:00</span></div><div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t2)"><span style="font-size:13px;width:18px">📍</span><span>交大徐汇校区体育馆</span></div></div><div class="cc-foot"><button class="cc-btn-p" onclick="toast('已报名双选会！')">立即报名</button><button class="cc-btn-s">详情</button><div style="flex:1;text-align:right;font-size:10px;color:var(--t3)">已报名 <strong>412</strong>/500</div></div></div>
+    </div>
+    <div id="camp-apply" style="display:none">
+      <div class="fb" style="margin-top:10px"><div class="fb-hd"><div class="fb-title">院校基本信息</div><span class="fb-badge" style="background:var(--bb);color:var(--bt)">院校专属</span></div><div class="fb-row"><div class="fb-lbl">院校名称</div><input class="fb-inp" placeholder="如：北京航空航天大学"></div><div class="fb-row"><div class="fb-lbl">联系人</div><input class="fb-inp" placeholder="就业处老师姓名"></div><div class="fb-row" style="border-bottom:none"><div class="fb-lbl">联系电话</div><input class="fb-inp" placeholder="手机号码" type="tel"></div></div>
+      <div class="fb"><div class="fb-hd"><div class="fb-title">招聘会需求</div></div><div class="fb-row"><div class="fb-lbl">活动类型</div><select class="fb-sel" style="flex:1"><option>专场宣讲会</option><option>双选会</option><option>线上宣讲直播</option></select></div><div class="fb-row" style="border-bottom:none"><div class="fb-lbl">意向时间</div><input class="fb-inp" type="date" value="2026-05-15"></div></div>
+      <button class="submit-btn" onclick="toast('申请已提交！平台3个工作日内审核')">提交预约申请</button>
+    </div>
+    <div id="camp-my" style="display:none">
+      <div class="campus-card" style="margin-top:10px"><div class="cc-hd"><div><div class="cc-title">国航2026春季校园招聘专场</div><div class="cc-meta-t">2026-04-28 · 北航逸夫楼</div></div><span style="font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px;background:var(--bb);color:var(--bt)">已报名</span></div><div style="padding:10px 13px"><div style="display:flex;gap:7px;font-size:12px;color:var(--t2)"><span>⏰</span><span>距活动还有 <strong style="color:var(--blue)">8天</strong></span></div></div><div class="cc-foot"><button class="cc-btn-s" onclick="toast('已取消报名')">取消报名</button><button class="cc-btn-p" onclick="toast('日历事件已添加')">加入日历</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ZHAOSHENG ===== -->
+<div class="pg" id="pg-zs">
+  <div class="zs-hero">
+    <div class="zz">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('home')">←</button><span style="font-size:16px;font-weight:700;color:#fff">乘务招生</span></div>
+        <button onclick="selZT('score')" style="background:var(--gold);color:var(--navy);border:none;border-radius:99px;padding:5px 13px;font-size:11px;font-weight:700;cursor:pointer">📊 志愿估分</button>
+      </div>
+      <div class="zlbl">全国乘务类专业院校查询平台</div>
+      <div class="ztitle">找院校 · 查专业<br>一站式报考指南</div>
+      <div class="zsub2">收录全国680+院校，7大类专业代码逐一详解，志愿估分+院校对比</div>
+      <div class="zsrch"><input placeholder="搜索学校名称、专业代码、城市..."/><button class="zsrch-btn">搜索</button></div>
+      <div class="zst-row">
+        <div class="zst"><div class="zstn">680+</div><div class="zstl">收录院校</div></div>
+        <div class="zst"><div class="zstn">12</div><div class="zstl">相关专业</div></div>
+        <div class="zst"><div class="zstn">34</div><div class="zstl">覆盖省份</div></div>
+        <div class="zst"><div class="zstn">92%</div><div class="zstl">平均就业率</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar2">
+    <div class="ttb on" id="ztb-m" onclick="selZT('majors')">专业代码</div>
+    <div class="ttb" id="ztb-s" onclick="selZT('schools')">院校查询</div>
+    <div class="ttb" id="ztb-g" onclick="selZT('guide')">报考指南</div>
+    <div class="ttb" id="ztb-sc" onclick="selZT('score')">分数线</div>
+  </div>
+  <div class="tc on" id="ztc-m" style="flex:1;overflow-y:auto">
+    <div class="msec">
+      <div class="ms-hd"><div class="ms-ln"></div>本科专业（4年）<div class="ms-ln"></div></div>
+      <div class="mcard on" onclick="toggleM(this)"><div class="mc-hd"><div class="mc-code" style="background:var(--bb);color:var(--bt)">120901K</div><div style="flex:1"><div class="mc-name">航空服务艺术与管理</div><div class="mc-meta2">本科·管理学·4年·管理学学士</div></div><div class="mc-arr">›</div></div><div class="mc-body"><div class="mc-s">专业简介</div><div class="mc-txt">最核心的航空乘务本科专业，直通各大航司乘务岗位，是报考航空服务方向的首选。</div><div class="mc-s">报考要求</div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">身高：女生160–172cm，男生175cm以上</div></div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">裸眼视力4.8+（或矫正后4.8），无色盲色弱</div></div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">普通话达二甲；部分院校需艺术联考（1–2月）</div></div><div class="mc-s">主修课程</div><div class="mc-txt">航空服务概论、客舱安全与应急、乘务礼仪、航空英语、形体训练、民航法规</div><div class="mc-s">就业方向</div><div class="mc-tags"><span class="tag tbl">航空乘务员</span><span class="tag tgr">乘务长</span><span class="tag tam">机场贵宾服务</span></div><div class="mc-s">代表院校</div><div class="mc-txt" style="color:var(--t1)">中国民航大学（天津）、北京第二外国语学院、上海工程技术大学、广州民航职院</div><button class="mc-btn" style="background:var(--blue)" onclick="event.stopPropagation();selZT('schools')">查看开设此专业的全部院校 →</button></div></div>
+      <div class="mcard" onclick="toggleM(this)"><div class="mc-hd"><div class="mc-code" style="background:var(--gb);color:var(--gt)">590202</div><div style="flex:1"><div class="mc-name">高速铁路客运乘务</div><div class="mc-meta2">高职专科·交通运输类·3年</div></div><div class="mc-arr">›</div></div><div class="mc-body"><div class="mc-s">专业简介</div><div class="mc-txt">直通铁路局系统（国有编制），就业稳定性最高，高职单招3–4月早于高考。</div><div class="mc-s">报考要求</div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">身高：女生160–175cm，男生170cm以上</div></div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">普通话标准，视力4.8可矫正，无晕车症</div></div><div class="mc-s">就业方向</div><div class="mc-tags"><span class="tag tgr">高铁乘务员</span><span class="tag tbl">列车长</span><span class="tag tam">站务管理</span></div><button class="mc-btn" style="background:var(--gt)" onclick="event.stopPropagation();selZT('schools')">查看全部院校 →</button></div></div>
+      <div class="mcard" onclick="toggleM(this)"><div class="mc-hd"><div class="mc-code" style="background:var(--cb);color:var(--ct)">710207</div><div style="flex:1"><div class="mc-name">空中乘务</div><div class="mc-meta2">中职/高职·航空服务类·3年</div></div><div class="mc-arr">›</div></div><div class="mc-body"><div class="mc-s">专业简介</div><div class="mc-txt">中高职最普及的航空服务专业，含模拟舱实操，入行门槛较低，就业面广。</div><div class="mc-s">报考要求</div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">中职：初中毕业；高职：高中毕业</div></div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">身高160cm以上，形象气质好，无色盲</div></div><div class="mc-s">就业方向</div><div class="mc-tags"><span class="tag tcy">乘务员</span><span class="tag tbl">酒店服务</span><span class="tag tgr">旅游接待</span></div><button class="mc-btn" style="background:#0f6e56" onclick="event.stopPropagation();selZT('schools')">查看全部院校 →</button></div></div>
+      <div class="mcard" onclick="toggleM(this)"><div class="mc-hd"><div class="mc-code" style="background:var(--pb);color:var(--pt)">590204</div><div style="flex:1"><div class="mc-name">城市轨道交通运营管理</div><div class="mc-meta2">高职专科·交通运输类·3年</div></div><div class="mc-arr">›</div></div><div class="mc-body"><div class="mc-s">专业简介</div><div class="mc-txt">地铁、城轨运营管理，门槛最低，国有单位为主，需求持续扩大，就业稳定。</div><div class="mc-s">报考要求</div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">无特殊身高限制，视力4.5达标即可</div></div><div class="mc-s">就业方向</div><div class="mc-tags"><span class="tag tpu">地铁站务</span><span class="tag tbl">行车调度</span><span class="tag tgr">客运管理</span></div><button class="mc-btn" style="background:#534ab7" onclick="event.stopPropagation();selZT('schools')">查看全部院校 →</button></div></div>
+      <div class="mcard" onclick="toggleM(this)"><div class="mc-hd"><div class="mc-code" style="background:var(--ab);color:var(--at)">560701</div><div style="flex:1"><div class="mc-name">民航运输</div><div class="mc-meta2">高职专科·交通运输类·3年</div></div><div class="mc-arr">›</div></div><div class="mc-body"><div class="mc-s">专业简介</div><div class="mc-txt">面向民用航空地面服务，培养值机、行李处理等人才，与机场直接就业通道。</div><div class="mc-s">报考要求</div><div class="mc-req"><div class="mc-dot"></div><div class="mc-rt">英语基础良好，服务意识强，身高158cm以上</div></div><div class="mc-s">就业方向</div><div class="mc-tags"><span class="tag tam">机场地勤</span><span class="tag tbl">值机员</span><span class="tag tgr">安检员</span></div><button class="mc-btn" style="background:#854f0b" onclick="event.stopPropagation();selZT('schools')">查看全部院校 →</button></div></div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+  <div class="tc" id="ztc-s" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:8px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:5px">按城市筛选</div>
+      <div class="cfrow"><div class="cfchip on" onclick="selCity(this)">全国</div><div class="cfchip" onclick="selCity(this)">北京</div><div class="cfchip" onclick="selCity(this)">天津</div><div class="cfchip" onclick="selCity(this)">上海</div><div class="cfchip" onclick="selCity(this)">广州</div><div class="cfchip" onclick="selCity(this)">成都</div><div class="cfchip" onclick="selCity(this)">武汉</div><div class="cfchip" onclick="selCity(this)">西安</div><div class="cfchip" onclick="selCity(this)">郑州</div><div class="cfchip" onclick="selCity(this)">南京</div></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:10px 0">
+      <div class="scard" onclick="toast('进入院校详情')"><div class="sc-hd"><div class="sc-av" style="background:var(--blue)">民</div><div style="flex:1"><div class="sc-name">中国民航大学</div><div class="sc-meta"><span class="lv-tag" style="background:var(--bb);color:var(--bt)">本科</span><span class="lv-tag" style="background:var(--rb);color:var(--rt)">部属</span>天津·公办</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tbl">航空服务艺术与管理</span><span class="tag tgr">民航运输</span></div></div></div><div class="sc-pills"><span class="sc-mpill" onclick="event.stopPropagation();toast('120901K — 航空服务艺术与管理')">120901K</span><span class="sc-mpill" onclick="event.stopPropagation();toast('560701 — 民航运输')">560701</span></div><div class="sc-foot"><div class="sc-score"><div class="sc-sn">548</div><div class="sc-sl">理科线</div></div><div class="sc-score"><div class="sc-sn">562</div><div class="sc-sl">文科线</div></div><div class="sc-score"><div class="sc-sn">92%</div><div class="sc-sl">就业率</div></div><button style="padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer" onclick="event.stopPropagation();toast('进入院校详情')">详情</button></div></div>
+      <div class="scard" onclick="toast('进入院校详情')"><div class="sc-hd"><div class="sc-av" style="background:#27500a">广</div><div style="flex:1"><div class="sc-name">广州民航职业技术学院</div><div class="sc-meta"><span class="lv-tag" style="background:var(--gb);color:var(--gt)">高职</span>广州·公办</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tgr">空中乘务</span><span class="tag tam">民航运输</span></div></div></div><div class="sc-pills"><span class="sc-mpill">710207</span><span class="sc-mpill">560701</span><span class="sc-mpill">560702</span></div><div class="sc-foot"><div class="sc-score"><div class="sc-sn">392</div><div class="sc-sl">理科线</div></div><div class="sc-score"><div class="sc-sn">408</div><div class="sc-sl">文科线</div></div><div class="sc-score"><div class="sc-sn">95%</div><div class="sc-sl">就业率</div></div><button style="padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer">详情</button></div></div>
+      <div class="scard" onclick="toast('进入院校详情')"><div class="sc-hd"><div class="sc-av" style="background:#534ab7">郑</div><div style="flex:1"><div class="sc-name">郑州铁路职业技术学院</div><div class="sc-meta"><span class="lv-tag" style="background:var(--pb);color:var(--pt)">高职</span>郑州·公办</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tpu">高铁乘务</span><span class="tag tgr">城轨运营</span></div></div></div><div class="sc-pills"><span class="sc-mpill">590202</span><span class="sc-mpill">590204</span></div><div class="sc-foot"><div class="sc-score"><div class="sc-sn">365</div><div class="sc-sl">理科线</div></div><div class="sc-score"><div class="sc-sn">378</div><div class="sc-sl">文科线</div></div><div class="sc-score"><div class="sc-sn">94%</div><div class="sc-sl">就业率</div></div><button style="padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer">详情</button></div></div>
+      <div class="scard" onclick="toast('进入院校详情')"><div class="sc-hd"><div class="sc-av" style="background:#854f0b">成</div><div style="flex:1"><div class="sc-name">成都航空职业技术学院</div><div class="sc-meta"><span class="lv-tag" style="background:var(--gb);color:var(--gt)">高职</span>成都·公办</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tgr">空中乘务</span><span class="tag tbl">民航运输</span></div></div></div><div class="sc-pills"><span class="sc-mpill">710207</span><span class="sc-mpill">560701</span></div><div class="sc-foot"><div class="sc-score"><div class="sc-sn">401</div><div class="sc-sl">理科线</div></div><div class="sc-score"><div class="sc-sn">415</div><div class="sc-sl">文科线</div></div><div class="sc-score"><div class="sc-sn">93%</div><div class="sc-sl">就业率</div></div><button style="padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer">详情</button></div></div>
+      <div class="scard" onclick="toast('进入院校详情')"><div class="sc-hd"><div class="sc-av" style="background:#0f6e56">武</div><div style="flex:1"><div class="sc-name">武汉铁路职业技术学院</div><div class="sc-meta"><span class="lv-tag" style="background:var(--gb);color:var(--gt)">高职</span>武汉·公办·铁路系统</div><div style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tpu">高铁乘务</span><span class="tag tcy">城市轨道</span></div></div></div><div class="sc-pills"><span class="sc-mpill">590202</span><span class="sc-mpill">590204</span></div><div class="sc-foot"><div class="sc-score"><div class="sc-sn">371</div><div class="sc-sl">理科线</div></div><div class="sc-score"><div class="sc-sn">385</div><div class="sc-sl">文科线</div></div><div class="sc-score"><div class="sc-sn">93%</div><div class="sc-sl">就业率</div></div><button style="padding:6px 14px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer">详情</button></div></div>
+    </div>
+  </div>
+  <div class="tc" id="ztc-g" style="flex:1;overflow-y:auto;padding:12px 16px">
+    <div class="iblock" style="margin-bottom:10px"><div class="ib-hd" style="background:var(--blue);color:#fff">📋 报考全流程</div><div style="padding:14px"><div class="step-row"><div class="step-n">1</div><div class="step-b"><div class="step-t">了解自身条件</div><div class="step-d">对照速查表确定可报行业，避免体检不达标</div></div></div><div class="step-row"><div class="step-n">2</div><div class="step-b"><div class="step-t">查询专业代码</div><div class="step-d">查看课程、要求与就业方向，确认匹配度后再选院校</div></div></div><div class="step-row"><div class="step-n">3</div><div class="step-b"><div class="step-t">筛选目标院校</div><div class="step-d">按城市、层次、分数线筛选，对比2–3所</div></div></div><div class="step-row"><div class="step-n" style="background:var(--gold);color:var(--navy)">4</div><div class="step-b" style="border-left:none;padding-bottom:0"><div class="step-t">填报志愿·参加考试</div><div class="step-d">高职单招3–4月（早于高考）；本科艺考1–2月</div></div></div></div></div>
+    <div class="iblock" style="margin-bottom:10px"><div class="ib-hd" style="background:#0f6e56;color:#fff">🎯 身高 &amp; 视力速查表</div><div class="ib-row"><div class="ib-k">✈ 航空</div><div class="ib-v">女160–172cm / 男175cm+ / 裸眼4.8</div></div><div class="ib-row"><div class="ib-k">🚄 高铁</div><div class="ib-v">女160–175cm / 男170cm+ / 4.8可矫</div></div><div class="ib-row"><div class="ib-k">🛫 机场</div><div class="ib-v">女158cm+ / 男168cm+ / 4.5可矫</div></div><div class="ib-row" style="border-bottom:none"><div class="ib-k">🚇 地铁</div><div class="ib-v">无身高限制 / 视力4.5达标</div></div></div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="tc" id="ztc-sc" style="flex:1;overflow-y:auto">
+    <div class="calc-box" style="margin:10px 16px 0"><div class="cb-hd">📊 输入高考分数，智能匹配可报院校</div><div class="cb-body"><div class="cb-row"><div class="cb-lbl">高考分数</div><input class="cb-inp" id="sc-inp" type="number" placeholder="如：460"></div><div class="cb-row"><div class="cb-lbl">科目类型</div><select class="cb-inp"><option>理科</option><option>文科</option><option>新高考</option></select></div><div class="cb-row"><div class="cb-lbl">意向方向</div><select class="cb-inp" id="sc-dir"><option>航空乘务（本科）</option><option>航空乘务（高职）</option><option>高铁乘务</option><option>不限方向</option></select></div><button class="cb-btn" onclick="calcScore()">开始匹配</button><div id="sc-result" style="margin-top:8px"></div></div></div>
+    <div class="sc-chart" style="margin:10px 16px 0"><div class="scc-t">中国民航大学·航空服务艺术与管理·理科录取线（近4年）</div><div class="scc-body"><div class="scc-wrap"><div class="scc-val">541</div><div class="scc-bar" style="height:62%"></div><div class="scc-yr">2022</div></div><div class="scc-wrap"><div class="scc-val">545</div><div class="scc-bar" style="height:68%"></div><div class="scc-yr">2023</div></div><div class="scc-wrap"><div class="scc-val">549</div><div class="scc-bar" style="height:74%"></div><div class="scc-yr">2024</div></div><div class="scc-wrap"><div class="scc-val">548</div><div class="scc-bar" style="height:72%"></div><div class="scc-yr">2025</div></div></div></div>
+    <div class="iblock" style="margin:10px 16px 0"><div class="ib-hd">2025年主要院校参考录取线</div><div class="ib-row"><div class="ib-k">中国民航大学</div><div class="ib-v red">本科·理548/文562</div></div><div class="ib-row"><div class="ib-k">上海工程技大</div><div class="ib-v red">本科·理494/文508</div></div><div class="ib-row"><div class="ib-k">广州民航职院</div><div class="ib-v red">高职·理392/文408</div></div><div class="ib-row"><div class="ib-k">成都航空职院</div><div class="ib-v red">高职·理401/文415</div></div><div class="ib-row" style="border-bottom:none"><div class="ib-k">郑州铁路职院</div><div class="ib-v red">高职·理365/文378</div></div></div>
+    <div style="height:14px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni on"><span class="nic">📚</span>招生</div>
+    <div class="ni" onclick="go('cert')"><span class="nic">🏅</span>考证</div>
+    <div class="ni" onclick="go('notif')"><span class="nic">🔔</span>通知</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== CERT ===== -->
+<div class="pg" id="pg-cert">
+  <div class="cert-hero">
+    <div class="cert-z">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('home')">←</button><span style="font-size:16px;font-weight:700;color:#fff">培训考证</span></div>
+        <button onclick="selCT('my')" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:99px;padding:5px 13px;font-size:11px;cursor:pointer">我的证书</button>
+      </div>
+      <div class="cert-lbl">乘务资质 · 权威认证 · 全国通用</div>
+      <div class="cert-title">12类乘务资质培训<br>从备考到拿证一站搞定</div>
+      <div class="cert-sub">急救证 · 普通话 · 安检 · 航空英语 · 形体礼仪 · 乘务长资质</div>
+      <div class="cert-tabs2"><div class="ctab3 on" id="ctab-all" onclick="selCT('all')">全部</div><div class="ctab3" id="ctab-cert" onclick="selCT('cert')">资质证书</div><div class="ctab3" id="ctab-skill" onclick="selCT('skill')">技能提升</div><div class="ctab3" id="ctab-mock" onclick="selCT('mock')">模拟面试</div><div class="ctab3" id="ctab-my" onclick="selCT('my')">我的证书</div></div>
+      <div class="cert-stats"><div class="cst"><div class="cstn">12,000+</div><div class="cstl">学员总数</div></div><div class="cst"><div class="cstn">98%</div><div class="cstl">通过率</div></div><div class="cst"><div class="cstn">36</div><div class="cstl">认证讲师</div></div><div class="cst"><div class="cstn">12</div><div class="cstl">课程类型</div></div></div>
+    </div>
+  </div>
+  <div class="tc on" id="ctc-all" style="flex:1;overflow-y:auto">
+    <div class="cal-card"><div class="cal-hd"><div class="cal-ht">近期开班计划</div><div class="cal-nw">本周可报名</div></div><div class="cal-item" onclick="toast('报名：急救证培训班')"><div class="cal-dt"><div class="cal-m">4月</div><div class="cal-d">25</div></div><div class="cal-info"><div class="cal-name">国际急救证（BFA）培训班</div><div class="cal-det">线上+线下·3天·北京/上海/广州同步</div></div><div class="cs-hot">🔥 热报</div></div><div class="cal-item" onclick="toast('报名：普通话强化班')"><div class="cal-dt"><div class="cal-m">5月</div><div class="cal-d">03</div></div><div class="cal-info"><div class="cal-name">普通话达标强化班（二甲冲刺）</div><div class="cal-det">线上直播·14天·随到随学·不过退款</div></div><div class="cs-open">报名中</div></div><div class="cal-item" onclick="toast('报名：形体礼仪集训')"><div class="cal-dt"><div class="cal-m">5月</div><div class="cal-d">10</div></div><div class="cal-info"><div class="cal-name">空乘形体礼仪集训营（周末班）</div><div class="cal-det">线下实体·上海徐汇·4周</div></div><div class="cs-soon">即将开班</div></div><div class="cal-item" onclick="toast('报名：乘务长晋级班')"><div class="cal-dt"><div class="cal-m">5月</div><div class="cal-d">18</div></div><div class="cal-info"><div class="cal-name">乘务长晋级资质培训班</div><div class="cal-det">线下集训·北京首都机场培训中心·5天</div></div><div class="cs-soon">即将开班</div></div></div>
+    <div style="padding:13px 16px 6px;font-size:14px;font-weight:700;color:var(--t1)">🏅 资质证书类</div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:var(--rb)">🚑</div><div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap;margin-bottom:3px"><div class="cc-name">国际急救证（BFA）</div><div class="cc-hot-b">必备</div></div><div class="cc-meta">民航局认可·航司面试加分·有效期2年<br>线上理论+线下实操·结业颁发国际证书</div></div></div><div class="cc-tags"><span class="tag tbl">民航认可</span><span class="tag tgr">国际通用</span><span class="tag tam">全国考点</span></div><div class="cc-foot"><div><span class="cc-price">¥680</span><span class="cc-orig">¥1,200</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:#e6f1fb">🎤</div><div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap;margin-bottom:3px"><div class="cc-name">普通话水平测试培训</div><div class="cc-hot-b">必考</div></div><div class="cc-meta">二甲达标冲刺·AI智能纠音·14天速成<br>配套题库·不过退款保障</div></div></div><div class="cc-tags"><span class="tag tgr">AI辅助</span><span class="tag tbl">不过退款</span><span class="tag tam">二甲冲刺</span></div><div class="cc-foot"><div><span class="cc-price">¥299</span><span class="cc-orig">¥499</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:var(--pb)">🔐</div><div style="flex:1"><div class="cc-name" style="margin-bottom:3px">安检员职业资格证（初级）</div><div class="cc-meta">人社部认证·机场地勤必备·全国通用<br>线上培训+考点统一考试·30天拿证</div></div></div><div class="cc-tags"><span class="tag tpu">人社部认证</span><span class="tag tgr">全国通用</span><span class="tag tbl">30天拿证</span></div><div class="cc-foot"><div><span class="cc-price">¥480</span><span class="cc-orig">¥800</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:var(--ab)">✈️</div><div style="flex:1"><div class="cc-name" style="margin-bottom:3px">航空英语口语证书（ICAO）</div><div class="cc-meta">国际民航组织认证·外教1对1授课<br>含听力+口语强化·16周系统课程</div></div></div><div class="cc-tags"><span class="tag tam">ICAO认证</span><span class="tag tbl">外教授课</span><span class="tag tgr">国际通用</span></div><div class="cc-foot"><div><span class="cc-price">¥1,280</span><span class="cc-orig">¥2,400</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div style="padding:13px 16px 6px;font-size:14px;font-weight:700;color:var(--t1)">💪 技能提升类</div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:var(--gb)">🧘</div><div style="flex:1"><div class="cc-name" style="margin-bottom:3px">空乘形体礼仪集训营</div><div class="cc-meta">走姿·仪态·微笑·盘发·妆容全套<br>线下实体·专业讲师手把手·4周</div></div></div><div class="cc-tags"><span class="tag tgr">线下实体</span><span class="tag tbl">专业讲师</span><span class="tag tam">4周速成</span></div><div class="cc-foot"><div><span class="cc-price">¥1,980</span><span class="cc-orig">¥3,600</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:var(--cb)">🎭</div><div style="flex:1"><div class="cc-name" style="margin-bottom:3px">乘务面试冲刺模拟班</div><div class="cc-meta">初试·复试·终面全流程模拟<br>真实考官1对1点评·录取率+40%</div></div></div><div class="cc-tags"><span class="tag tcy">真实模拟</span><span class="tag tgr">考官点评</span><span class="tag tbl">通过保障</span></div><div class="cc-foot"><div><span class="cc-price">¥880</span><span class="cc-orig">¥1,600</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div class="cc"><div class="cc-hd2"><div class="cc-ico" style="background:#f0f0f0">👩‍✈️</div><div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap;margin-bottom:3px"><div class="cc-name">乘务长晋级资质培训班</div><div class="cc-new-b">进阶</div></div><div class="cc-meta">民航局认可·含安全管理+服务管理<br>北京首都机场培训中心·5天集训</div></div></div><div class="cc-tags"><span class="tag tbl">民航局认可</span><span class="tag tgr">线下集训</span><span class="tag tam">证书颁发</span></div><div class="cc-foot"><div><span class="cc-price">¥2,800</span><span class="cc-orig">¥4,800</span></div><button class="cc-enroll" onclick="event.stopPropagation();toast('报名成功！')">立即报名</button></div></div>
+    <div style="height:12px"></div>
+  </div>
+  <div class="tc" id="ctc-my" style="flex:1;overflow-y:auto;padding:14px">
+    <div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;margin-bottom:9px">🏅</div><div style="font-size:15px;font-weight:700;color:var(--t1);margin-bottom:3px">我的考证档案</div><div style="font-size:12px;color:var(--t2)">证书自动联动简历，招聘方可见，提升竞争力</div></div>
+    <div class="iblock" style="margin-bottom:12px"><div class="my-cert-item"><div class="my-cert-ico" style="background:var(--rb)">🚑</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px">国际急救证（BFA）</div><div style="font-size:11px;color:var(--t2)">2024-03-15取得 · 有效至2026-03-14</div></div><span style="font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px;background:var(--gb);color:var(--gt)">有效</span></div><div class="my-cert-item" style="border-bottom:none"><div class="my-cert-ico" style="background:#e6f1fb">🎤</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px">普通话水平证书</div><div style="font-size:11px;color:var(--t2)">二级甲等 · 2023-09-20取得</div></div><span style="font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px;background:var(--gb);color:var(--gt)">有效</span></div></div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:14px"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">🎯 还差这些，面试竞争力+40%</div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:10px"><span onclick="selCT('all')" style="cursor:pointer;background:var(--pb);color:var(--pt);font-size:12px;padding:6px 13px;border-radius:99px;font-weight:500">🔐 安检员资质</span><span onclick="selCT('all')" style="cursor:pointer;background:var(--ab);color:var(--at);font-size:12px;padding:6px 13px;border-radius:99px;font-weight:500">✈️ 航空英语证</span><span onclick="selCT('all')" style="cursor:pointer;background:var(--gb);color:var(--gt);font-size:12px;padding:6px 13px;border-radius:99px;font-weight:500">🧘 形体礼仪培训</span></div></div>
+  </div>
+  <div class="tc" id="ctc-cert" style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;padding:40px"><div style="font-size:42px;margin-bottom:12px">🏅</div><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:5px">资质证书类</div><button onclick="selCT('all')" style="margin-top:14px;padding:10px 24px;background:var(--pu);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">查看全部课程</button></div></div>
+  <div class="tc" id="ctc-skill" style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;padding:40px"><div style="font-size:42px;margin-bottom:12px">💪</div><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:5px">技能提升类</div><button onclick="selCT('all')" style="margin-top:14px;padding:10px 24px;background:var(--pu);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">查看全部课程</button></div></div>
+  <div class="tc" id="ctc-mock" style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;padding:40px"><div style="font-size:42px;margin-bottom:12px">🎭</div><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:5px">模拟面试</div><button onclick="selCT('all')" style="margin-top:14px;padding:10px 24px;background:var(--pu);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">查看课程</button></div></div>
+  <div class="bnav">
+    <div class="ni" onclick="go('home')"><span class="nic">🏠</span>首页</div>
+    <div class="ni" onclick="go('zs')"><span class="nic">📚</span>招生</div>
+    <div class="ni on"><span class="nic">🏅</span>考证</div>
+    <div class="ni" onclick="go('notif')"><span class="nic">🔔</span>通知</div>
+    <div class="ni" onclick="go('profile')"><span class="nic">👤</span>我的</div>
+  </div>
+</div>
+
+<!-- ===== EMPLOYER ===== -->
+<div class="pg" id="pg-employer">
+  <div class="emp-hero">
+    <div class="emp-z">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px"><button class="bbtn" onclick="go('land')">←</button><div style="font-size:15px;font-weight:700;color:#fff">用人单位招聘端</div></div></div>
+      <div class="emp-steps"><div class="est"><div class="est-n done">✓</div><div class="est-lbl">资料填写</div></div><div class="est-line"></div><div class="est"><div class="est-n curr">2</div><div class="est-lbl">资质认证</div></div><div class="est-line"></div><div class="est"><div class="est-n todo">3</div><div class="est-lbl">审核通过</div></div><div class="est-line"></div><div class="est"><div class="est-n todo">4</div><div class="est-lbl">发布岗位</div></div></div>
+      <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:3px">用人单位入驻中心</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.6)">认证入驻 · 精准触达68万+求职者</div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div style="margin:10px 16px 0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px"><div style="font-size:12px;font-weight:700;color:var(--t1);margin-bottom:8px">已认证入驻企业</div><div class="cert-strip-row"><div class="cert-co"><div class="cert-co-logo" style="background:var(--navy)">CA</div><div style="font-size:11px;color:var(--t1)">国航</div><span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:99px">✓</span></div><div class="cert-co"><div class="cert-co-logo" style="background:#b00">MU</div><div style="font-size:11px;color:var(--t1)">东航</div><span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:99px">✓</span></div><div class="cert-co"><div class="cert-co-logo" style="background:#1a5fb4">CR</div><div style="font-size:11px;color:var(--t1)">中国铁路</div><span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:99px">✓</span></div><div class="cert-co"><div class="cert-co-logo" style="background:#c00">SHA</div><div style="font-size:11px;color:var(--t1)">上海机场</div><span style="font-size:9px;background:var(--gb);color:var(--gt);padding:1px 5px;border-radius:99px">✓</span></div></div></div>
+    <div class="fb" style="margin-top:10px"><div class="fb-hd"><div class="fb-title">企业基本信息</div><span class="fb-badge" style="background:var(--bb);color:var(--bt)">必填</span></div><div class="fb-row"><div class="fb-lbl">企业名称</div><input class="fb-inp" placeholder="营业执照上的全称"></div><div class="fb-row"><div class="fb-lbl">行业类型</div><select class="fb-sel" style="flex:1"><option>民用航空公司</option><option>铁路局/高铁公司</option><option>机场集团</option><option>地铁/城轨公司</option><option>安保/安检公司</option></select></div><div class="fb-row"><div class="fb-lbl">信用代码</div><input class="fb-inp" placeholder="18位统一社会信用代码"></div><div class="fb-row" style="border-bottom:none"><div class="fb-lbl">联系人</div><input class="fb-inp" placeholder="HR负责人姓名"></div></div>
+    <div class="fb"><div class="fb-hd"><div class="fb-title">资质认证材料</div><span class="fb-badge" style="background:var(--ab);color:var(--at)">审核1–3工作日</span></div><div class="fb-row" style="flex-direction:column;align-items:stretch;gap:7px"><div class="fb-lbl" style="width:auto">营业执照（副本）</div><div id="lic-upload" onclick="fakeUp(this,'营业执照.jpg')" style="flex:1;border:1.5px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:11px;color:var(--t3);background:var(--bg)">点击上传 JPG / PNG / PDF · 限10MB</div></div><div class="fb-row" style="flex-direction:column;align-items:stretch;gap:7px;border-bottom:none"><div class="fb-lbl" style="width:auto">行业经营许可证</div><div id="cert-upload" onclick="fakeUp(this,'经营许可证.pdf')" style="flex:1;border:1.5px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;font-size:11px;color:var(--t3);background:var(--bg)">民航：CCAR运营许可 / 铁路：运营资质证</div></div></div>
+    <div class="fb"><div class="fb-hd" style="display:flex;align-items:center;justify-content:space-between"><div class="fb-title">已发布岗位管理</div><button onclick="togglePostForm()" style="padding:4px 12px;background:var(--blue);color:#fff;border:none;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer">+ 发布新岗位</button></div>
+      <div id="post-form" style="display:none;padding:12px 13px;border-bottom:1px solid var(--border)"><div style="display:flex;flex-direction:column;gap:8px"><input class="fb-inp" style="width:100%" placeholder="岗位名称"><select class="fb-sel" style="width:100%"><option>航空乘务员</option><option>高铁乘务员</option><option>机场地勤</option><option>安检员</option></select><input class="fb-inp" style="width:100%" placeholder="薪资范围"><input class="fb-inp" style="width:100%" placeholder="工作城市"><div style="display:flex;gap:7px"><button onclick="submitJob()" style="flex:1;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer">提交审核</button><button onclick="togglePostForm()" style="padding:10px 14px;border:1px solid var(--border);border-radius:9px;background:none;color:var(--t2);cursor:pointer;font-size:12px">取消</button></div></div></div>
+      <div id="job-ok" style="display:none;padding:10px 13px;background:var(--gb);font-size:12px;color:var(--gt);border-bottom:1px solid var(--border)">✓ 岗位已提交审核，通过后自动上线</div>
+      <div class="job-item"><div class="ji-title">国际航线客舱乘务员</div><div class="ji-meta">1.2万–1.8万 · 北京 · 招5人</div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;background:var(--gb);color:var(--gt)">已上线</span><span style="font-size:10px;color:var(--t3)">👁 3,241 · 86人报名</span></div><div class="ji-actions"><button class="ji-btn">编辑</button><button class="ji-btn danger">下线</button></div></div>
+      <div class="job-item" style="border-bottom:none"><div class="ji-title">机场值机柜台服务员</div><div class="ji-meta">5,500–7,000 · 上海 · 招10人</div><span style="font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;background:var(--ab);color:var(--at)">审核中</span></div>
+    </div>
+    <button onclick="submitBiz()" style="display:block;margin:10px 16px 4px;width:calc(100% - 32px);padding:13px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer">提交企业入驻申请</button>
+    <div id="biz-ok" style="display:none;margin:0 16px 4px;padding:11px;background:var(--gb);border-radius:10px;font-size:12px;color:var(--gt)">✓ 入驻申请已提交，审核通过后将通过微信服务号通知您</div>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- ===== OVERLAYS ===== -->
+<div class="modal-wrap" id="modal">
+  <div class="modal">
+    <div class="modal-title">修改网名</div>
+    <div class="modal-sub">网名每30天可修改一次<br>修改后他人将看到新名字</div>
+    <input class="modal-inp" id="nick-inp" maxlength="20" placeholder="输入新网名（最多20字）">
+    <div class="modal-hint">当前：✈晓雨同学 &nbsp;·&nbsp; 还可修改1次</div>
+    <div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">取消</button><button class="modal-ok" onclick="saveNick()">确认修改</button></div>
+  </div>
+</div>
+
+<div class="share-sheet" id="share-sheet" onclick="if(event.target===this)closeShare()">
+  <div class="ss-inner">
+    <div class="ss-title">分享此内容</div>
+    <div class="ss-grid">
+      <div class="ss-opt" onclick="doShare('微信好友')"><div class="ss-ico" style="background:var(--gb)">💬</div><div class="ss-lbl">微信好友</div></div>
+      <div class="ss-opt" onclick="doShare('朋友圈')"><div class="ss-ico" style="background:var(--bb)">🌐</div><div class="ss-lbl">朋友圈</div></div>
+      <div class="ss-opt" onclick="doShare('复制链接')"><div class="ss-ico" style="background:var(--ab)">🔗</div><div class="ss-lbl">复制链接</div></div>
+      <div class="ss-opt" onclick="doShare('微博')"><div class="ss-ico" style="background:var(--rb)">📢</div><div class="ss-lbl">微博</div></div>
+    </div>
+    <button class="ss-cancel" onclick="closeShare()">取消</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ===== API 配置 =====
+const API = 'http://47.116.181.216:3000'
+let currentUser = null
+let authToken = null
+try { authToken = localStorage.getItem('cw_token') } catch(e) {}
+
+// API 请求封装
+async function request(path, options={}) {
+  const headers = {'Content-Type':'application/json'}
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken
+  try {
+    const res = await fetch(API + path, {...options, headers})
+    return await res.json()
+  } catch(e) {
+    console.error('API错误:', e)
+    return null
+  }
+}
+
+// 加载职位列表
+async function loadJobs(industry='') {
+  const url = industry ? `/api/jobs?industry=${encodeURIComponent(industry)}` : '/api/jobs'
+  const data = await request(url)
+  if (!data || data.code !== 200) return
+  const jobs = data.data
+  // 更新职位卡片区域
+  const container = document.querySelector('#pg-home .jcard')?.parentNode
+  if (!container) return
+  // 移除旧的职位卡片
+  document.querySelectorAll('#pg-home .jcard').forEach(c => c.remove())
+  // 插入新数据
+  const banner = document.querySelector('#pg-home .banner')
+  jobs.forEach(job => {
+    const card = document.createElement('div')
+    card.className = 'jcard'
+    card.onclick = () => { loadJobDetail(job.id); go('detail') }
+    card.innerHTML = `
+      <div class="jc-in">
+        <div class="jc-top">
+          <div class="jc-t">${job.title}</div>
+          <div class="jc-s">${job.salary || '薪资面议'}</div>
+        </div>
+        <div class="jc-co">
+          <div class="colog" style="background:var(--navy)">${(job.company_code||'CO').slice(0,2)}</div>
+          ${job.company} · ${job.city || '全国'}
+          <span class="vb">✓ 认证</span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${(job.tags||[]).map(t=>`<span class="tag tbl">${t}</span>`).join('')}
+        </div>
+        <div class="jc-foot">
+          <span>${job.industry || ''}</span>
+          <span class="ddl">⏰ 截止${job.deadline ? job.deadline.slice(0,10) : '待定'}</span>
+        </div>
+      </div>`
+    banner ? container.insertBefore(card, banner) : container.appendChild(card)
+  })
+}
+
+// 加载职位详情
+async function loadJobDetail(id) {
+  const data = await request('/api/jobs/' + id)
+  if (!data || data.code !== 200) return
+  const job = data.data
+  const el = id => document.getElementById(id)
+  document.querySelector('#pg-detail .det-title').textContent = job.title
+  document.querySelector('#pg-detail .det-co').textContent = `${job.company} · ${job.city} · 企业`
+  document.querySelector('#pg-detail .det-sal').textContent = job.salary || '薪资面议'
+}
+
+// 用户注册
+async function apiRegister(phone, password, nickname) {
+  const data = await request('/api/users/register', {
+    method: 'POST',
+    body: JSON.stringify({phone, password, nickname})
+  })
+  return data
+}
+
+// 用户登录
+async function apiLogin(phone, password) {
+  const data = await request('/api/users/login', {
+    method: 'POST',
+    body: JSON.stringify({phone, password})
+  })
+  if (data && data.code === 200) {
+    authToken = data.data.token
+    currentUser = data.data.user
+    try { localStorage.setItem('cw_token', authToken); localStorage.setItem('cw_user', JSON.stringify(currentUser)) } catch(e) {}
+  }
+  return data
+}
+
+// 页面加载时初始化
+window.addEventListener('load', () => {
+  // 恢复登录状态
+  let savedUser = null; try { savedUser = localStorage.getItem('cw_user') } catch(e) {}
+  if (savedUser) {
+    try { currentUser = JSON.parse(savedUser) } catch(e) {}
+  }
+  // 加载首页职位
+  loadJobs()
+})
+
+// ===== ROUTING =====
+const PM={land:'pg-land',home:'pg-home',detail:'pg-detail',news:'pg-news',forum:'pg-forum',post:'pg-post','forum-write':'pg-forum-write',travel:'pg-travel','blog-write':'pg-blog-write',shop:'pg-shop',notif:'pg-notif',chat:'pg-chat','chat-win':'pg-chat-win',resume:'pg-resume',profile:'pg-profile',campus:'pg-campus',zs:'pg-zs',cert:'pg-cert',employer:'pg-employer'};
+function go(n){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));const k=PM[n];if(k)document.getElementById(k).classList.add('on');else toast('页面开发中...')}
+
+// ===== ZHAOSHENG TABS =====
+const ZTS=['m','s','g','sc'],ZTIDS=['majors','schools','guide','score'];
+function selZT(name){const idx=ZTIDS.indexOf(name);ZTS.forEach((t,i)=>{const tc=document.getElementById('ztc-'+t),tb=document.getElementById('ztb-'+ZTIDS[i]);if(!tc||!tb)return;if(i===idx){tc.classList.add('on');tc.style.display='block';tb.classList.add('on')}else{tc.classList.remove('on');tc.style.display='none';tb.classList.remove('on')}})}
+
+// ===== CERT TABS =====
+const CTABS=['all','cert','skill','mock','my'];
+function selCT(name){CTABS.forEach(t=>{const tc=document.getElementById('ctc-'+t),tb=document.getElementById('ctab-'+t);if(tc){tc.classList.remove('on');tc.style.display='none'}if(tb)tb.classList.toggle('on',t===name)});const el=document.getElementById('ctc-'+name);if(el){el.classList.add('on');el.style.display='block'}}
+
+// ===== CAMPUS TABS =====
+function selCampTab(el,tab){document.querySelectorAll('.c-tabs .ctab').forEach(t=>t.classList.toggle('on',t===el));['events','apply','my'].forEach(id=>{const e=document.getElementById('camp-'+id);if(e)e.style.display=id===tab?'block':'none'})}
+
+// ===== COMMON =====
+function selInd(el){document.querySelectorAll('.ic').forEach(c=>c.classList.remove('on'));el.classList.add('on');const name=el.querySelector('.ic-name')?.textContent||'';loadJobs(name==='全部'?'':name)}
+function selF(el){const p=el.parentNode;p.querySelectorAll('.cfchip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function selCTab(el){const p=el.parentNode;p.querySelectorAll('.ctab').forEach(t=>t.classList.toggle('on',t===el))}
+function selCity(el){el.parentNode.querySelectorAll('.cfchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');toast('已筛选：'+el.textContent)}
+function toggleM(card){const was=card.classList.contains('on');document.querySelectorAll('.mcard').forEach(c=>c.classList.remove('on'));if(!was)card.classList.add('on')}
+
+// ===== JOB DETAIL =====
+let favd=false,applied=false;
+function doApply(){applied=!applied;const btn=document.getElementById('apply-btn');btn.textContent=applied?'✓ 已报名':'立即报名';btn.className='apply-btn'+(applied?' done':'');if(applied)toast('报名成功！等待HR审核通知')}
+function doFav(){favd=!favd;document.getElementById('fav-btn').textContent=favd?'★ 已收藏':'☆ 收藏';toast(favd?'已收藏该职位':'已取消收藏')}
+
+// ===== FORUM =====
+function pLike(el){el.classList.toggle('liked');const m=el.textContent.trim().match(/([^\d]+)([\d,.k]+)/);if(m){const raw=m[2].replace('k','000').replace(',','');const n=parseInt(raw)+(el.classList.contains('liked')?1:-1);el.textContent=m[1]+(n>=1000?(n/1000).toFixed(1)+'k':n)}}
+function toggleTag(el){el.classList.toggle('on');if(el.classList.contains('on')){el.style.background='var(--blue)';el.style.color='#fff';el.style.borderColor='var(--blue)'}else{el.style.background='';el.style.color='';el.style.borderColor=''}}
+function pubPost(){toast('帖子发布成功！审核通过后自动上线');setTimeout(()=>go('forum'),1400)}
+
+// ===== POST DETAIL =====
+let replyTarget=null;
+function toggleReact(el){const n=el.querySelector('span'),on=el.classList.toggle('on');n.textContent=parseInt(n.textContent)+(on?1:-1)}
+function toggleMainLike(){document.getElementById('main-like').classList.toggle('liked')}
+function ciLike(el){el.classList.toggle('on');const m=el.textContent.trim().match(/([^\d]+)(\d+)/);if(m){const n=parseInt(m[2])+(el.classList.contains('on')?1:-1);el.textContent=m[1]+n}}
+function setReply(name){replyTarget=name;const h=document.getElementById('reply-hint');h.style.display='flex';document.getElementById('reply-to').textContent='回复 @'+name;document.getElementById('cbi').focus()}
+function clearReply(){replyTarget=null;document.getElementById('reply-hint').style.display='none'}
+function addEmoji(e){const ta=document.getElementById('cbi');ta.value+=e;ta.focus();autoR(ta)}
+function autoR(ta){ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,80)+'px'}
+function sendCmt(){const ta=document.getElementById('cbi');const txt=ta.value.trim();if(!txt)return;const list=document.getElementById('comments');const isReply=replyTarget!==null;const div=document.createElement('div');div.className='comment-item'+(isReply?' reply':'');const rp=isReply?'回复 <span style="color:var(--blue)">@'+replyTarget+'</span>：':'';div.innerHTML='<div class="ci-hd"><div class="ci-av" style="background:var(--gold)">我</div><div class="ci-name">✈晓雨同学<span class="ci-lv">Lv.6</span></div><div class="ci-time">刚刚</div></div><div class="ci-body">'+rp+txt+'</div><div class="ci-foot"><div class="ci-like on" onclick="ciLike(this)">❤️ 1</div><div class="ci-reply-btn" onclick="setReply('楼主')">回复</div></div>';list.appendChild(div);ta.value='';ta.style.height='auto';clearReply();list.scrollTop=9999;toast('评论已发布！')}
+
+// ===== CHAT =====
+function sendMsg(){const inp=document.getElementById('chat-inp');const t=inp.value.trim();if(!t)return;const body=document.getElementById('cw-body');const now=new Date().toLocaleTimeString('zh',{hour:'2-digit',minute:'2-digit'});body.innerHTML+='<div class="msg me">'+t+'<div class="msg-time">'+now+'</div></div>';inp.value='';body.scrollTop=9999;setTimeout(()=>{body.innerHTML+='<div class="msg them">好的，已为您登记，届时请携带身份证和简历，期待您的到来！<div class="msg-time">'+now+'</div></div>';body.scrollTop=9999},900)}
+
+// ===== RESUME =====
+function upPhoto(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{document.getElementById('r-av').innerHTML='<img src="'+ev.target.result+'"/>';const pp=document.getElementById('pp');pp.style.padding='0';pp.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">';document.getElementById('r-fill').style.width='92%';toast('照片上传成功！')};r.readAsDataURL(file)}
+function toggleRS(id){const v=document.getElementById(id+'-v'),e=document.getElementById(id+'-e');if(v.style.display==='none'){v.style.display='';e.style.display='none'}else{v.style.display='none';e.style.display=''}}
+function cntIntro(el){const n=el.value.length;document.getElementById('intro-cnt').textContent=n+'/300字'}
+function saveResume(){document.getElementById('r-fill').style.width='95%';toast('档案已保存并对招聘方开放 ✓')}
+
+// ===== PROFILE =====
+function showModal(){document.getElementById('nick-inp').value=document.getElementById('prof-nick').textContent;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveNick(){const v=document.getElementById('nick-inp').value.trim();if(!v){toast('网名不能为空');return}document.getElementById('prof-nick').textContent=v;document.getElementById('ps-val').textContent=v;closeModal();toast('网名已修改为：'+v+' ✓')}
+
+// ===== NOTIF/WX =====
+function bindWx(){const b=document.getElementById('wx-bind');b.textContent='✓ 已绑定';b.style.background='rgba(255,255,255,.3)';toast('微信服务号绑定成功！')}
+function toggleSwitch(el){el.classList.toggle('on');toast(el.classList.contains('on')?'已开启推送':'已关闭推送')}
+function toggleAct(row){const btn=row.querySelector('.ac-btn');btn.classList.toggle('on');btn.textContent=btn.classList.contains('on')?'已提醒':'提醒我';toast(btn.classList.contains('on')?'已设置活动提醒！开始前30分钟微信通知':'已取消活动提醒')}
+
+// ===== SHOP =====
+let cartN=3;
+function addCart(){cartN++;document.getElementById('cart-badge').textContent=cartN;toast('已加入购物车！当前'+cartN+'件')}
+
+// ===== CAMPUS =====
+// (selCampTab already defined above)
+
+// ===== EMPLOYER =====
+function togglePostForm(){const f=document.getElementById('post-form');f.style.display=f.style.display==='none'?'block':'none'}
+function submitJob(){document.getElementById('post-form').style.display='none';document.getElementById('job-ok').style.display='block';toast('岗位已提交审核')}
+function submitBiz(){document.getElementById('biz-ok').style.display='block';toast('入驻申请已提交！')}
+function fakeUp(el,name){el.textContent='✓ 已上传：'+name;el.style.background='var(--gb)';el.style.color='var(--gt)';el.style.borderColor='var(--gt)'}
+
+// ===== ZHAOSHENG CALC =====
+const DB=[{n:'中国民航大学',line:548,lv:'本科',dir:'航空'},{n:'上海工程技术大学',line:494,lv:'本科',dir:'航空'},{n:'广州民航职院',line:392,lv:'高职',dir:'航空'},{n:'成都航空职院',line:401,lv:'高职',dir:'航空'},{n:'郑州铁路职院',line:365,lv:'高职',dir:'高铁'},{n:'武汉铁路职院',line:371,lv:'高职',dir:'高铁'}];
+function calcScore(){const s=parseInt(document.getElementById('sc-inp').value),dir=document.getElementById('sc-dir').value,el=document.getElementById('sc-result');if(!s||s<200||s>750){el.innerHTML='<div style="padding:10px;background:var(--rb);color:var(--rt);border-radius:9px;font-size:13px">请输入有效分数（200–750）</div>';return}const matched=DB.filter(sc=>{if(dir.includes('本科')&&sc.lv!=='本科')return false;if(dir.includes('高铁')&&sc.dir!=='高铁')return false;return s>=sc.line-30&&s<=sc.line+90});if(!matched.length){el.innerHTML='<div style="padding:10px;background:var(--ab);color:var(--at);border-radius:9px;font-size:13px">暂无精确匹配，建议拓宽区间或考虑高职单招</div>';return}el.innerHTML=matched.map(sc=>{const d=s-sc.line,st=d>=0?'<span style="color:var(--gt);font-weight:700">高出'+d+'分 ✓</span>':'<span style="color:var(--at)">差'+Math.abs(d)+'分</span>';return'<div style="background:#f9f9f9;border-radius:10px;padding:10px;border:1px solid var(--border);margin-bottom:6px"><div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">'+sc.n+'</div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--t2)">'+sc.lv+'·'+sc.dir+'方向·录取线'+sc.line+'</span>'+st+'</div></div>'}).join('')}
+
+// ===== SHARE =====
+function showShare(){document.getElementById('share-sheet').classList.add('show')}
+function closeShare(){document.getElementById('share-sheet').classList.remove('show')}
+function doShare(method){closeShare();toast('已分享到 '+method+' ✓')}
+
+// ===== TOAST =====
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)}
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  // Init zhaosheng tabs
+  ['s','g','sc'].forEach(t=>{const el=document.getElementById('ztc-'+t);if(el)el.style.display='none'});
+  // Init cert tabs
+  ['cert','skill','mock','my'].forEach(t=>{const el=document.getElementById('ctc-'+t);if(el)el.style.display='none'});
+  // Init campus tabs
+  ['camp-apply','camp-my'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none'});
+});
+</script>
+</body>
+</html>
