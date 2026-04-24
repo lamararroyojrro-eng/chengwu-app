@@ -1305,7 +1305,7 @@ html,body{height:100%;background:#0d1b3e;font-family:-apple-system,BlinkMacSyste
 
 <script>
 // ===== API 配置 =====
-const API = 'http://47.116.181.216:3000'
+const API = '' // 同源相对路径：浏览器 → Vercel HTTPS → /api/[...path].js 代理 → HTTP 后端
 let currentUser = null
 let authToken = null
 try { authToken = localStorage.getItem('cw_token') } catch(e) {}
