@@ -1304,6 +1304,110 @@ html,body{height:100%;background:#0d1b3e;font-family:-apple-system,BlinkMacSyste
 </div>
 
 <script>
+// ===== API 配置 =====
+const API = 'http://47.116.181.216:3000'
+let currentUser = null
+let authToken = localStorage.getItem('cw_token') || null
+
+// API 请求封装
+async function request(path, options={}) {
+  const headers = {'Content-Type':'application/json'}
+  if (authToken) headers['Authorization'] = 'Bearer ' + authToken
+  try {
+    const res = await fetch(API + path, {...options, headers})
+    return await res.json()
+  } catch(e) {
+    console.error('API错误:', e)
+    return null
+  }
+}
+
+// 加载职位列表
+async function loadJobs(industry='') {
+  const url = industry ? `/api/jobs?industry=${encodeURIComponent(industry)}` : '/api/jobs'
+  const data = await request(url)
+  if (!data || data.code !== 200) return
+  const jobs = data.data
+  // 更新职位卡片区域
+  const container = document.querySelector('#pg-home .jcard')?.parentNode
+  if (!container) return
+  // 移除旧的职位卡片
+  document.querySelectorAll('#pg-home .jcard').forEach(c => c.remove())
+  // 插入新数据
+  const banner = document.querySelector('#pg-home .banner')
+  jobs.forEach(job => {
+    const card = document.createElement('div')
+    card.className = 'jcard'
+    card.onclick = () => { loadJobDetail(job.id); go('detail') }
+    card.innerHTML = `
+      <div class="jc-in">
+        <div class="jc-top">
+          <div class="jc-t">${job.title}</div>
+          <div class="jc-s">${job.salary || '薪资面议'}</div>
+        </div>
+        <div class="jc-co">
+          <div class="colog" style="background:var(--navy)">${(job.company_code||'CO').slice(0,2)}</div>
+          ${job.company} · ${job.city || '全国'}
+          <span class="vb">✓ 认证</span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          ${(job.tags||[]).map(t=>`<span class="tag tbl">${t}</span>`).join('')}
+        </div>
+        <div class="jc-foot">
+          <span>${job.industry || ''}</span>
+          <span class="ddl">⏰ 截止${job.deadline ? job.deadline.slice(0,10) : '待定'}</span>
+        </div>
+      </div>`
+    banner ? container.insertBefore(card, banner) : container.appendChild(card)
+  })
+}
+
+// 加载职位详情
+async function loadJobDetail(id) {
+  const data = await request('/api/jobs/' + id)
+  if (!data || data.code !== 200) return
+  const job = data.data
+  const el = id => document.getElementById(id)
+  document.querySelector('#pg-detail .det-title').textContent = job.title
+  document.querySelector('#pg-detail .det-co').textContent = `${job.company} · ${job.city} · 企业`
+  document.querySelector('#pg-detail .det-sal').textContent = job.salary || '薪资面议'
+}
+
+// 用户注册
+async function apiRegister(phone, password, nickname) {
+  const data = await request('/api/users/register', {
+    method: 'POST',
+    body: JSON.stringify({phone, password, nickname})
+  })
+  return data
+}
+
+// 用户登录
+async function apiLogin(phone, password) {
+  const data = await request('/api/users/login', {
+    method: 'POST',
+    body: JSON.stringify({phone, password})
+  })
+  if (data && data.code === 200) {
+    authToken = data.data.token
+    currentUser = data.data.user
+    localStorage.setItem('cw_token', authToken)
+    localStorage.setItem('cw_user', JSON.stringify(currentUser))
+  }
+  return data
+}
+
+// 页面加载时初始化
+window.addEventListener('load', () => {
+  // 恢复登录状态
+  const savedUser = localStorage.getItem('cw_user')
+  if (savedUser) {
+    try { currentUser = JSON.parse(savedUser) } catch(e) {}
+  }
+  // 加载首页职位
+  loadJobs()
+})
+
 // ===== ROUTING =====
 const PM={land:'pg-land',home:'pg-home',detail:'pg-detail',news:'pg-news',forum:'pg-forum',post:'pg-post','forum-write':'pg-forum-write',travel:'pg-travel','blog-write':'pg-blog-write',shop:'pg-shop',notif:'pg-notif',chat:'pg-chat','chat-win':'pg-chat-win',resume:'pg-resume',profile:'pg-profile',campus:'pg-campus',zs:'pg-zs',cert:'pg-cert',employer:'pg-employer'};
 function go(n){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));const k=PM[n];if(k)document.getElementById(k).classList.add('on');else toast('页面开发中...')}
@@ -1320,7 +1424,7 @@ function selCT(name){CTABS.forEach(t=>{const tc=document.getElementById('ctc-'+t
 function selCampTab(el,tab){document.querySelectorAll('.c-tabs .ctab').forEach(t=>t.classList.toggle('on',t===el));['events','apply','my'].forEach(id=>{const e=document.getElementById('camp-'+id);if(e)e.style.display=id===tab?'block':'none'})}
 
 // ===== COMMON =====
-function selInd(el){document.querySelectorAll('.ic').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function selInd(el){document.querySelectorAll('.ic').forEach(c=>c.classList.remove('on'));el.classList.add('on');const name=el.querySelector('.ic-name')?.textContent||'';loadJobs(name==='全部'?'':name)}
 function selF(el){const p=el.parentNode;p.querySelectorAll('.cfchip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
 function selCTab(el){const p=el.parentNode;p.querySelectorAll('.ctab').forEach(t=>t.classList.toggle('on',t===el))}
 function selCity(el){el.parentNode.querySelectorAll('.cfchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');toast('已筛选：'+el.textContent)}
