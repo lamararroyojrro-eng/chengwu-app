@@ -1307,7 +1307,8 @@ html,body{height:100%;background:#0d1b3e;font-family:-apple-system,BlinkMacSyste
 // ===== API 配置 =====
 const API = 'http://47.116.181.216:3000'
 let currentUser = null
-let authToken = localStorage.getItem('cw_token') || null
+let authToken = null
+try { authToken = localStorage.getItem('cw_token') } catch(e) {}
 
 // API 请求封装
 async function request(path, options={}) {
@@ -1391,8 +1392,7 @@ async function apiLogin(phone, password) {
   if (data && data.code === 200) {
     authToken = data.data.token
     currentUser = data.data.user
-    localStorage.setItem('cw_token', authToken)
-    localStorage.setItem('cw_user', JSON.stringify(currentUser))
+    try { localStorage.setItem('cw_token', authToken); localStorage.setItem('cw_user', JSON.stringify(currentUser)) } catch(e) {}
   }
   return data
 }
@@ -1400,7 +1400,7 @@ async function apiLogin(phone, password) {
 // 页面加载时初始化
 window.addEventListener('load', () => {
   // 恢复登录状态
-  const savedUser = localStorage.getItem('cw_user')
+  let savedUser = null; try { savedUser = localStorage.getItem('cw_user') } catch(e) {}
   if (savedUser) {
     try { currentUser = JSON.parse(savedUser) } catch(e) {}
   }
